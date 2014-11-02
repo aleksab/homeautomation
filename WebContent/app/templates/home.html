@@ -1,0 +1,15 @@
+<div class="container">
+    <div class="pull-right ">	
+        <span translate>Global:Language:select</span> <select class="input-sm" data-ng-change="language.select(language.selected)" ng-model="language.selected" data-ng-options="'Global:Language:'+language|translate for language in language.available"></select>
+    </div>
+</div>
+
+<div class="jumbotron">
+    <div class="container">
+        <h2 translate>Home:Title <i class="glyphicon glyphicon-transfer"></i></h2>
+        <p translate>Home:Text</p>                  
+        <a class="btn btn-primary" href="mood" translate>Global:Button:Start</a>                    
+    </div>
+</div>
+
+<div data-ng-include="'app/templates/partials/footer.html'"></div>

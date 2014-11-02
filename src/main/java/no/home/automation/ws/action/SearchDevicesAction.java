@@ -52,14 +52,14 @@ public class SearchDevicesAction extends DefaultHandler<SearchDeviceRequest, Sea
 			logger.info("sensor: " + lightMessage.sensorId);
 			logger.info("unitcode: " + lightMessage.unitcode);
 
-			Device device = new Device(lightMessage.sensorId, lightMessage.unitcode, "Light Sensor");
+			Device device = new Device(lightMessage.sensorId, lightMessage.unitcode, "Light Sensor", 0);
 			if (!devices.contains(device))
 				devices.add(device);
 		}
 		else
 		{
 			logger.info("Unknown type: " + message.packetType);
-			devices.add(new Device(0, 0, "Unknown Sensor (" + message.packetType + ")"));
+			devices.add(new Device(0, 0, "Unknown Sensor (" + message.packetType + ")", 0));
 		}
 	}
 

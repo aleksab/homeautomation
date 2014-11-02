@@ -1,0 +1,16 @@
+{	
+    "Home:Title": "Welcome to sentiment analyze",
+    "Home:Text": "This tool will help us build a database of sentimental values for different text documents. This is important in order to establish a baseline of how humans consider sentences and text either positive, neutral or negative. By participating in this research you are helping us reaching that goal.<br/><br/>If you choose to participate in this research, you are 100% anonoymous. You can enter your email in order to be part of a lottery that will take part after the research is done. For each text you label you will recieve a ticket and all your tickets goes into a bucket. Once the research is done, we will select on ticket that will be awared an Ipad or Galaxy Tab.",
+    "Global:Modal:Privacy:Title": "Privacy",
+    "Global:Modal:Privacy:Text": "If you choose to participate in this research, you are 100% anonoymous. You can enter your email in order to be part of a lottery that will take part after the research is done. For each text you label you will recieve a ticket and all your tickets goes into a bucket. Once the research is done, we will select on ticket that will be awared an Ipad or Galaxy Tab.",
+    "Global:Button:Start": "Start",
+    "Global:Button:Home": "Home",
+    "Global:Button:Help": "Help",
+    "Global:Button:Hide Help": "Hide Help",
+    "Global:Button:Privacy": "Privacy",
+    "Global:Button:Admin": "Admin",
+    "Global:Language:en": "English",
+    "Global:Language:no": "Norsk",
+    "Global:Language:select": "Select language",
+    "Global:Excuse": "We are currently experience some trouble so please be patient"
+}

@@ -34,6 +34,24 @@ public class RfxcomBusMock implements RfxcomBus
 		listenerList.remove(listener);
 	}
 
+	@Override
+	public boolean sendLightOnCommand(Device device)
+	{
+		return true;
+	}
+
+	@Override
+	public boolean sendLightOffCommand(Device device)
+	{
+		return true;
+	}
+
+	@Override
+	public boolean sendLightDimCommand(Device device, int dimPercentage)
+	{
+		return true;
+	}
+
 	public void sendLightEvents(int startSeconds, int secondsIntveral)
 	{
 		if (sendLightEvents)
@@ -84,26 +102,5 @@ public class RfxcomBusMock implements RfxcomBus
 		catch (InterruptedException e)
 		{
 		}
-	}
-
-	@Override
-	public boolean sendLightOnCommand(Device device)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean sendLightOffCommand(Device device)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean sendLightDimCommand(Device device, int dimPercentage)
-	{
-		// TODO Auto-generated method stub
-		return false;
 	}
 }

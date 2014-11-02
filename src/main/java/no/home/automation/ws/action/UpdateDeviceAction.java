@@ -36,7 +36,8 @@ public class UpdateDeviceAction extends DefaultHandler<UpdateDeviceRequest, Upda
 		else if (request.getType() == TYPE.RENAME)
 			result = updateDevice(request.getSensorId(), request.getUnitCode(), request.getName());
 
-		return new UpdateDeviceResponse(new Device(request.getSensorId(), request.getUnitCode(), request.getName()), result);
+		return new UpdateDeviceResponse(new Device(request.getSensorId(), request.getUnitCode(), request.getName(), request.getTurnOffAfter()),
+				result);
 	}
 
 	@Override

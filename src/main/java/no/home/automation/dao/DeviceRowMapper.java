@@ -12,6 +12,6 @@ public class DeviceRowMapper implements ParameterizedRowMapper<Device>
 	@Override
 	public Device mapRow(ResultSet resultSet, int i) throws SQLException
 	{
-		return new Device(resultSet.getInt("sensorId"), resultSet.getInt("unitCode"), resultSet.getString("name"));
+		return new Device(resultSet.getInt("SensorId"), resultSet.getInt("UnitCode"), resultSet.getString("Name"), resultSet.getInt("TurnOffAfter"));
 	}
 }

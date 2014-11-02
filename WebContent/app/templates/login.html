@@ -1,0 +1,46 @@
+<div class="jumbotron">
+    <div class="container">
+
+
+        <form class="form-signin" role="form" ng-submit="auth.login()">
+
+            <h2 class="form-signin-heading">Please sign in</h2>
+
+            <div class="alert" ng-class="'alert-'+auth.feedback.status" ng-show="auth.feedback!=null" ng-bind="auth.feedback.message"></div>
+
+            <input type="text" class="form-control" placeholder="Username" required autofocus ng-model="auth.credentials.username">
+            <input type="password" class="form-control" placeholder="Password" required ng-model="auth.credentials.password">
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        </form>
+
+
+        <div class="alert alert-info">
+            <ul>
+                <li>To log in properly do it with
+                    <pre><code>Username: </code>admin
+<code>Password: </code><i>any</i></pre>
+                </li>
+                <li>To see "invalid username or password" message, login with
+                    <pre><code>Username: </code>nouser
+<code>Password: </code><i>any</i></pre>
+                </li>
+                <li>To see "some other auth error" message, login with
+                    <pre><code>Username: </code>error
+<code>Password: </code><i>any</i></pre>
+                </li>
+                <li>To see "unknown server error" message, login with
+                    <pre><code>Username: </code><i>any</i>
+<code>Password: </code><i>any</i></pre>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+    <!-- /container -->
+</div>
+
+<nav class="navbar navbar-default navbar-fixed-bottom">
+    <div class="container text-center">
+        <a href="/app">Home</a> | <a href="" show-privacy-modal-box translate>Global:Button:Privacy</a> | <a href="">Use of data</a>
+    </div>
+</nav>

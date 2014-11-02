@@ -1,0 +1,4 @@
+{
+    "status":"success",
+    "message":"User logged in. You should be redirected to /admin now, but since handshake is mocked, change it manually. Open hanshake.json and set isLoggedIn to true. Then refresh this page. You will be forwarded to admin automatically"
+}

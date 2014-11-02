@@ -100,7 +100,7 @@ public class SentimentWs
 		post("/device/list", "application/json", new ListDevicesAction(false, jdbcTemplate), new JsonTransformer());
 		post("/device/update", "application/json", new UpdateDeviceAction(false, jdbcTemplate), new JsonTransformer());
 		post("/device/search", "application/json", new SearchDevicesAction(false, bus), new JsonTransformer());
-		post("/device/command", "application/json", new SendCommandAction(false, bus), new JsonTransformer());
+		post("/device/command", "application/json", new SendCommandAction(false, bus, jdbcTemplate), new JsonTransformer());
 
 		get("/throwexception", (request, response) -> {
 			throw new RuntimeException();

@@ -1,0 +1,86 @@
+<div class="page-header">
+	<div class="container text-center container-help">		
+ 		<p>Please rate the text below as best as you can. If you can not decide then you can ask for more context or skip this text.</p>
+ 		<div class="arrow-holder lu alert" ng-show="help.isVisible==true">
+           	<p ng-bind="help.messages.info"></p>
+       	</div>        
+  	</div>
+</div>
+
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1">
+        	    <h2>{{text}}</h2>
+            	<div class="arrow-holder ru alert" ng-show="help.isVisible==true">
+                    <p ng-bind="help.messages.text"></p>
+                </div>
+            </div>
+        </div>
+
+		<br/><br/>
+
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <span ng-repeat="rating in ratings track by $index">
+                    <button title="{{rating.description}}" class="btn btn-default" ng-click="myRating.selected=rating.id" ng-class="{'btn-success':myRating.selected==rating.id}">{{rating.name}}</button>
+                </span>
+                <div class="arrow-holder lu alert" ng-show="help.isVisible==true">
+                    <p ng-bind="help.messages.rating"></p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<br/><br/>
+
+<div class="container">
+	<div class="text-center">
+	
+	<span class="container-help">
+		<div class="arrow-holder ru alert" ng-show="help.isVisible==true">
+        	<p ng-bind="help.messages.more"></p>
+    	</div>
+		<button class="btn btn-default" ng-click="moreText()" >I need more context</button>
+	</span>
+	
+	
+	
+	<button class="btn btn-default" ng-click="skipRating()" >Skip</button>
+	
+	
+	<span class="container-help">
+	<div class="arrow-holder lu alert" ng-show="help.isVisible==true">
+        <p ng-bind="help.messages.done"></p>
+    </div>
+	<button class="btn btn-default" ng-click="commitRating()" ng-class="{'btn-primary':myRating.selected!=null}" ng-disabled="myRating.selected==null">Done</button>
+	</span>
+	
+	</div>	
+</div>
+
+<br/><br/><br/><br/>
+
+<div class="container text-center">
+	<span class="container-help">
+		<p>Currently my mood is <span class="label label-info">{{myMood.name}}</span></p>
+		<a href="mood">Select a different mood</a>
+		<div class="arrow-holder lu alert" ng-show="help.isVisible==true">
+	        <p ng-bind="help.messages.mood"></p>
+	    </div>
+	</span>
+</div>
+
+<nav  class="navbar navbar-default navbar-fixed-bottom">
+	<div class="container text-center">
+		<a href="/app" ng-click="showModal()" translate>Global:Button:Home</a> | 
+		<a href="" data-ng-click="help.isVisible=!help.isVisible">
+            <span ng-show="help.isVisible==false" translate>Global:Button:Help</span>
+            <span ng-show="help.isVisible==true" translate>Global:Button:Hide Help</span>
+        </a> |
+		<a href="" ng-click="showModal()" translate>Global:Button:Privacy</a> | <a href="" show-privacy-modal-box translate>Global:Button:Privacy</a> | <a href="admin" translate>Global:Button:Admin</a>
+	</div>
+</nav >

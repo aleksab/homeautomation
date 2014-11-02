@@ -1,0 +1,10 @@
+{
+	"ratings": 
+		[
+			{"id":"1", "name":"very negative", "description":"if you this this text is very negative"},
+			{"id":"2", "name":"negative", "description":"if you this this text is negative"},
+			{"id":"3", "name":"neutral", "description":"if you this this text is neutral"},
+			{"id":"4", "name":"positive", "description":"if you this this text is positive"},
+			{"id":"5", "name":"very positive", "description":"if you this this text is very positive"}			
+		]
+}

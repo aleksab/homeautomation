@@ -1,0 +1,34 @@
+<!DOCTYPE >
+<html>
+<head>
+    <title></title>
+    <base href="/app/"/>
+    <script src="./bower_components/angular/angular.min.js"></script>
+    <script src="./bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="./bower_components/angular-route/angular-route.min.js"></script>
+    <script src="./bower_components/angular-translate/angular-translate.min.js"></script>    
+    <script src="./bower_components/angular-strap/dist/angular-strap.min.js"></script>
+    <script src="./bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
+    <link rel="stylesheet" href="./bower_components/bootstrap-css-only/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="./assets/styles/style.css"/>
+    <script src="app/app.js"></script>
+    <script src="app/directives.js"></script>
+    <script src="app/services.js"></script>
+    <script src="app/controllers.js"></script>
+</head>
+<body ng-app="app">
+
+<!-- angular removes ng-cloak attributes after it has started. therefore you can use it to communicate and to prevent screen flickering before angular has started -->
+<ng-view ng-cloak></ng-view>
+
+<!-- thanks to the show-when-not-angular class it will do same as above, but reverse logic -->
+<div ng-cloak class="show-when-not-angular alert alert-danger">If you see this message, then angular have failed. Maybe you need to do:
+    <ul>
+        <li><code>git pull</code> to fetch latest code version</li>
+        <li><code>bower install</code> to install new plugins.</li>
+        <li>Or just check <code>console.log</code></li>
+    </ul>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+	"moods": 
+		[
+			{"id":"1", "name":"alert", "description":"if you feel alert"},
+			{"id":"2", "name":"excited", "description":"if you feel excited"},
+			{"id":"3", "name":"elated", "description":"if you feel elated"},
+			{"id":"4", "name":"happy", "description":"if you feel happy"},
+			{"id":"5", "name":"contented", "description":"if you feel contented"},
+			{"id":"6", "name":"serene", "description":"if you feel serene"},
+			{"id":"7", "name":"relaxed", "description":"if you feel relaxed"},
+			{"id":"8", "name":"calm", "description":"if you feel calm"},
+			{"id":"9", "name":"sad", "description":"if you feel sad"},
+			{"id":"10", "name":"depressed", "description":"if you feel depressed"},
+			{"id":"11", "name":"bored", "description":"if you feel bored"},
+			{"id":"12", "name":"fatigued", "description":"if you feel fatigued"},
+			{"id":"13", "name":"tense", "description":"if you feel tense"},
+			{"id":"14", "name":"nervous", "description":"if you feel nervous"},
+			{"id":"15", "name":"stressed", "description":"if you feel stressed"},
+			{"id":"16", "name":"upset", "description":"if you feel upset"}			
+		]
+}

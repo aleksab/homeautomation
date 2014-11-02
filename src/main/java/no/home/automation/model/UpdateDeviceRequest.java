@@ -13,14 +13,26 @@ public class UpdateDeviceRequest extends RequestValidator
 	private int		sensorId;
 	private int		unitCode;
 	private String	name;
+	private int		turnOffAfter;
 
-	public UpdateDeviceRequest(TYPE type, int sensorId, int unitCode, String name)
+	public UpdateDeviceRequest(TYPE type, int sensorId, int unitCode, String name, int turnOffAfter)
 	{
 		super();
 		this.type = type;
 		this.sensorId = sensorId;
 		this.unitCode = unitCode;
 		this.name = name;
+		this.turnOffAfter = turnOffAfter;
+	}
+
+	public int getTurnOffAfter()
+	{
+		return turnOffAfter;
+	}
+
+	public void setTurnOffAfter(int turnOffAfter)
+	{
+		this.turnOffAfter = turnOffAfter;
 	}
 
 	public TYPE getType()

@@ -1,0 +1,1 @@
+Ideally this folder should be protected by backend.

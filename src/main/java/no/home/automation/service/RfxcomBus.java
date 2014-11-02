@@ -12,5 +12,5 @@ public interface RfxcomBus
 
 	public boolean sendLightOffCommand(Device device);
 
-	public boolean sendLightDimCommand(Device device, int dimPercentage);
+	public boolean sendLightDimCommand(Device device, int dimPercentage);	
 }
