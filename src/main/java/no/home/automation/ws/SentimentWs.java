@@ -15,6 +15,7 @@ import no.home.automation.ws.action.ListDevicesAction;
 import no.home.automation.ws.action.LoginAction;
 import no.home.automation.ws.action.SearchDevicesAction;
 import no.home.automation.ws.action.SendCommandAction;
+import no.home.automation.ws.action.UpdateDeviceAction;
 
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang.StringUtils;
@@ -81,22 +82,23 @@ public class SentimentWs
 		bus.startBus("COM7");
 
 		XMLConfiguration config = new XMLConfiguration("config.xml");
-		
+
 		String databaseHost = config.getString("database.host", "");
 		String databaseName = config.getString("database.name", "");
 		String databaseUsername = config.getString("database.username", "");
 		String databasePassword = config.getString("database.password", "");
-		
+
 		String connectionString = "jdbc:mysql://" + databaseHost + "/" + databaseName + "?user=" + URLEncoder.encode(databaseUsername, "utf-8")
 				+ "&password=" + URLEncoder.encode(databasePassword, "utf-8");
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
 		dataSource.setUrl(connectionString);
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		
+
 		post("/login", "application/json", new LoginAction(false), new JsonTransformer());
 
 		post("/device/list", "application/json", new ListDevicesAction(false, jdbcTemplate), new JsonTransformer());
+		post("/device/update", "application/json", new UpdateDeviceAction(false, jdbcTemplate), new JsonTransformer());
 		post("/device/search", "application/json", new SearchDevicesAction(false, bus), new JsonTransformer());
 		post("/device/command", "application/json", new SendCommandAction(false, bus), new JsonTransformer());
 
