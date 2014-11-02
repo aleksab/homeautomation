@@ -6,18 +6,23 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.SparkBase.setPort;
 
+import java.net.URLEncoder;
 import java.util.Base64;
 
 import no.home.automation.model.JsonTransformer;
 import no.home.automation.service.RfxcomBusImpl;
 import no.home.automation.ws.action.ListDevicesAction;
 import no.home.automation.ws.action.LoginAction;
+import no.home.automation.ws.action.SearchDevicesAction;
 import no.home.automation.ws.action.SendCommandAction;
 
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -29,7 +34,7 @@ public class SentimentWs
 	@Parameter(names = "-port", description = "Webservice port")
 	private int					port	= 5300;
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws Exception
 	{
 		PropertyConfigurator.configure("log4j.properties");
 		new SentimentWs(args);
@@ -40,14 +45,14 @@ public class SentimentWs
 
 	}
 
-	public SentimentWs(String[] args)
+	public SentimentWs(String[] args) throws Exception
 	{
 		new JCommander(this, args);
 
 		startServer();
 	}
 
-	public void startServer()
+	public void startServer() throws Exception
 	{
 		logger.info("Starting server on port {}", port);
 		setPort(port);
@@ -75,12 +80,26 @@ public class SentimentWs
 		RfxcomBusImpl bus = new RfxcomBusImpl();
 		bus.startBus("COM7");
 
+		XMLConfiguration config = new XMLConfiguration("config.xml");
+		
+		String databaseHost = config.getString("database.host", "");
+		String databaseName = config.getString("database.name", "");
+		String databaseUsername = config.getString("database.username", "");
+		String databasePassword = config.getString("database.password", "");
+		
+		String connectionString = "jdbc:mysql://" + databaseHost + "/" + databaseName + "?user=" + URLEncoder.encode(databaseUsername, "utf-8")
+				+ "&password=" + URLEncoder.encode(databasePassword, "utf-8");
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		dataSource.setUrl(connectionString);
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		
 		post("/login", "application/json", new LoginAction(false), new JsonTransformer());
 
-		post("/device/list", "application/json", new ListDevicesAction(false, bus), new JsonTransformer());
+		post("/device/list", "application/json", new ListDevicesAction(false, jdbcTemplate), new JsonTransformer());
+		post("/device/search", "application/json", new SearchDevicesAction(false, bus), new JsonTransformer());
+		post("/device/command", "application/json", new SendCommandAction(false, bus), new JsonTransformer());
 
-		post("/device/command", "application/json", new SendCommandAction(false, bus), new JsonTransformer()); 
-		
 		get("/throwexception", (request, response) -> {
 			throw new RuntimeException();
 		});

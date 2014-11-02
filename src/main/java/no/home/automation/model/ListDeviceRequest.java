@@ -2,16 +2,16 @@ package no.home.automation.model;
 
 public class ListDeviceRequest extends RequestValidator
 {
-	private boolean	shouldShowKnownDevices	= false;
+	private String	category	= null;
 
-	public boolean isShouldShowKnownDevices()
+	public String getCategory()
 	{
-		return shouldShowKnownDevices;
+		return category;
 	}
 
-	public void setShouldShowKnownDevices(boolean shouldShowKnownDevices)
+	public void setCategory(String category)
 	{
-		this.shouldShowKnownDevices = shouldShowKnownDevices;
+		this.category = category;
 	}
 
 	@Override

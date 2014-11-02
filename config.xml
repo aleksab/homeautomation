@@ -1,0 +1,21 @@
+<config>	
+	<general>
+		<sendAlarmSms>false</sendAlarmSms>
+	</general>
+	<database>
+		<host>localhost</host>		
+		<username>root</username>
+		<password>power27</password>
+		<name>homebox</name>
+	</database>	
+	<email>		
+		<alarmAddress>4797959098@smsmail.com, 4798219474@smsmail.com</alarmAddress>		
+		<smtp>
+			<host>mail.prognett.no</host>
+			<port>465</port>
+			<username>cron@prognett.no</username>
+			<password>9Dxh0.-77{%n</password>
+			<fromAddress>cron@prognett.no</fromAddress>			
+		</smtp>		
+	</email>
+</config>

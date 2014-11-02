@@ -11,9 +11,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class ListDevicesActionTest
+public class SearchDevicesActionTest
 {
-	private static ListDevicesAction	action	= null;
+	private static SearchDevicesAction	action	= null;
 	private static RfxcomBusMock		bus;
 
 	@BeforeClass
@@ -23,7 +23,7 @@ public class ListDevicesActionTest
 
 		bus = new RfxcomBusMock();		
 
-		action = new ListDevicesAction(false, bus);
+		action = new SearchDevicesAction(false, bus);
 	}
 
 	@AfterClass
