@@ -15,6 +15,18 @@ public class RuleRowMapper implements ParameterizedRowMapper<Rule>
 	public Rule mapRow(ResultSet resultSet, int i) throws SQLException
 	{
 		return new Rule(resultSet.getInt("RuleId"), resultSet.getString("Name"), resultSet.getBoolean("Active"), resultSet.getInt("WhenDeviceId"),
-				WHEN.getEnum(resultSet.getString("WhenAction")), new LocalTime(resultSet.getString("WhenTime")), null, null);
+				WHEN.getEnum(resultSet.getString("WhenAction")), getTime(resultSet.getString("WhenTime")), null, null);
+	}
+
+	private LocalTime getTime(String input)
+	{
+		try
+		{
+			return LocalTime.parse(input);
+		}
+		catch (Exception ex)
+		{
+			return null;
+		}
 	}
 }

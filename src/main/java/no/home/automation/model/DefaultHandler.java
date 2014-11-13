@@ -63,6 +63,7 @@ public abstract class DefaultHandler<T extends RequestValidator, V> implements R
 		}
 		catch (Exception ex)
 		{
+			ex.printStackTrace();
 			return "Internal error: " + ex.getMessage();
 		}
 	}

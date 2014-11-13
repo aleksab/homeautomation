@@ -10,7 +10,11 @@ import no.home.automation.model.RuleThen;
 import no.home.automation.model.UpdateRuleRequest;
 import no.home.automation.model.UpdateRuleRequest.TYPE;
 import no.home.automation.model.UpdateRuleResponse;
+import no.home.automation.ws.LocalTimeTypeConverter;
 
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
@@ -39,13 +43,14 @@ public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRu
 		else if (request.getType() == TYPE.EDIT)
 			result = false;
 
-		return new UpdateRuleResponse(0, result);
+		return new UpdateRuleResponse(request.getRule().getId(), result);
 	}
 
 	@Override
 	public UpdateRuleRequest translate(String json)
 	{
 		GsonBuilder gsonBuilder = new GsonBuilder();
+		gsonBuilder.registerTypeAdapter(LocalTime.class, new LocalTimeTypeConverter());
 		Gson gson = gsonBuilder.create();
 		return gson.fromJson(json, UpdateRuleRequest.class);
 	}
@@ -71,17 +76,18 @@ public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRu
 	{
 		int ruleId = insertNewRule(rule);
 
-		if (ruleId != 0)
-		{
-			for (RuleThen ruleThen : rule.getThenList())
-			{
-				insertRuleThen(ruleId, ruleThen);
-			}
+		if (ruleId == 0)
+			return false;
 
-			for (RuleCondition ruleCondition : rule.getConditionList())
-			{
-				insertRuleCondition(ruleId, ruleCondition);
-			}
+		rule.setId(ruleId);
+		for (RuleThen ruleThen : rule.getThenList())
+		{
+			insertRuleThen(ruleId, ruleThen);
+		}
+
+		for (RuleCondition ruleCondition : rule.getConditionList())
+		{
+			insertRuleCondition(ruleId, ruleCondition);
 		}
 
 		return true;
@@ -95,14 +101,16 @@ public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRu
 			simpleInsert.withTableName("rule");
 			simpleInsert.setGeneratedKeyName("RuleId");
 
+			DateTimeFormatter fmt = DateTimeFormat.forPattern("HH:mm:ss");
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("Name", rule.getName());
-			parameters.put("Active", rule.isActive());
+			parameters.put("Active", String.valueOf(rule.isActive()));
 			parameters.put("WhenDeviceId", rule.getWhenDeviceId());
-			parameters.put("WhenAction", rule.getWhenAction());
-			parameters.put("WhenTime", rule.getWhenTime().toString());
+			parameters.put("WhenAction", rule.getWhenAction().toString());
+			parameters.put("WhenTime", rule.getWhenTime().toString(fmt));
 
-			return simpleInsert.executeAndReturnKey(parameters).intValue();
+			Number id = simpleInsert.executeAndReturnKey(parameters);
+			return id.intValue();
 		}
 		catch (Exception ex)
 		{
@@ -144,14 +152,17 @@ public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRu
 			simpleInsert.withTableName("rule_condition");
 			simpleInsert.setGeneratedKeyName("Id");
 
+			DateTimeFormatter fmt = DateTimeFormat.forPattern("HH:mm:ss");
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("RuleId", ruleId);
-			parameters.put("Condition", ruleCondition.getCondition());
-			parameters.put("TimeOfDay", ruleCondition.getTimeOfDay());
+			parameters.put("ConditionTrigger", ruleCondition.getCondition().toString());
+			parameters.put("TimeOfDay", ruleCondition.getTimeOfDay().toString(fmt));
 			parameters.put("DayOfWeek", ruleCondition.getDayOfWeek());
 			parameters.put("DelayInMinutes", ruleCondition.getDelayInMinutes());
-			parameters.put("From", ruleCondition.getFrom());
-			parameters.put("To", ruleCondition.getTo());
+			parameters.put("FromTime", ruleCondition.getFromTime().toString(fmt));
+			parameters.put("ToTime", ruleCondition.getToTime().toString(fmt));
+			parameters.put("FromDayOfWeek", ruleCondition.getFromDayOfWeek());
+			parameters.put("ToDayOfWeek", ruleCondition.getToDayOfWeek());
 
 			simpleInsert.execute(parameters);
 

@@ -81,7 +81,7 @@ public class SentimentWs
 		});
 
 		RfxcomBusImpl bus = new RfxcomBusImpl();
-		bus.startBus("COM7");
+		//bus.startBus("COM7");
 
 		XMLConfiguration config = new XMLConfiguration("config.xml");
 
@@ -91,7 +91,7 @@ public class SentimentWs
 		String databasePassword = config.getString("database.password", "");
 
 		String connectionString = "jdbc:mysql://" + databaseHost + "/" + databaseName + "?user=" + URLEncoder.encode(databaseUsername, "utf-8")
-				+ "&password=" + URLEncoder.encode(databasePassword, "utf-8");
+				+ "&password=" + URLEncoder.encode(databasePassword, "utf-8") + "&zeroDateTimeBehavior=convertToNull";
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
 		dataSource.setUrl(connectionString);

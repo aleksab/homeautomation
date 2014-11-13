@@ -1,13 +1,12 @@
 package no.home.automation.model;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
 public class RuleCondition
 {
 	public enum CONDITION
 	{
-		TIME_OF_DAY, DAY_OF_WEEK, FROM_TO_TIME, FROM_TO_DAY_OF_WEEK, DELAY_MINUTES;
+		TIME_OF_DAY, DAY_OF_WEEK, DELAY_MINUTES, FROM_TO_TIME, FROM_TO_DAY_OF_WEEK;
 
 		public static CONDITION getEnum(String name)
 		{
@@ -27,10 +26,13 @@ public class RuleCondition
 	private LocalTime	timeOfDay;
 	private int			dayOfWeek;
 	private int			delayInMinutes;
-	private DateTime	from;
-	private DateTime	to;
+	private LocalTime	fromTime;
+	private LocalTime	toTime;
+	private int			fromDayOfWeek;
+	private int			toDayOfWeek;
 
-	public RuleCondition(int id, CONDITION condition, LocalTime timeOfDay, int dayOfWeek, int delayInMinutes, DateTime from, DateTime to)
+	public RuleCondition(int id, CONDITION condition, LocalTime timeOfDay, int dayOfWeek, int delayInMinutes, LocalTime fromTime, LocalTime toTime,
+			int fromDayOfWeek, int toDayOfWeek)
 	{
 		super();
 		this.id = id;
@@ -38,8 +40,10 @@ public class RuleCondition
 		this.timeOfDay = timeOfDay;
 		this.dayOfWeek = dayOfWeek;
 		this.delayInMinutes = delayInMinutes;
-		this.from = from;
-		this.to = to;
+		this.fromTime = fromTime;
+		this.toTime = toTime;
+		this.fromDayOfWeek = fromDayOfWeek;
+		this.toDayOfWeek = toDayOfWeek;
 	}
 
 	public int getId()
@@ -92,24 +96,44 @@ public class RuleCondition
 		this.delayInMinutes = delayInMinutes;
 	}
 
-	public DateTime getFrom()
+	public LocalTime getFromTime()
 	{
-		return from;
+		return fromTime;
 	}
 
-	public void setFrom(DateTime from)
+	public void setFromTime(LocalTime fromTime)
 	{
-		this.from = from;
+		this.fromTime = fromTime;
 	}
 
-	public DateTime getTo()
+	public LocalTime getToTime()
 	{
-		return to;
+		return toTime;
 	}
 
-	public void setTo(DateTime to)
+	public void setToTime(LocalTime toTime)
 	{
-		this.to = to;
+		this.toTime = toTime;
+	}
+
+	public int getFromDayOfWeek()
+	{
+		return fromDayOfWeek;
+	}
+
+	public void setFromDayOfWeek(int fromDayOfWeek)
+	{
+		this.fromDayOfWeek = fromDayOfWeek;
+	}
+
+	public int getToDayOfWeek()
+	{
+		return toDayOfWeek;
+	}
+
+	public void setToDayOfWeek(int toDayOfWeek)
+	{
+		this.toDayOfWeek = toDayOfWeek;
 	}
 
 	public void validate()
@@ -120,7 +144,9 @@ public class RuleCondition
 			throw new IllegalArgumentException("dayOfWeek is incorrect");
 		if (condition == CONDITION.DELAY_MINUTES && (delayInMinutes <= 0 || delayInMinutes > 360))
 			throw new IllegalArgumentException("delayInMinutes is incorrect");
-		if ((condition == CONDITION.FROM_TO_TIME || condition == CONDITION.FROM_TO_DAY_OF_WEEK) && (from == null || to == null))
+		if (condition == CONDITION.FROM_TO_TIME && (fromTime == null || toTime == null))
+			throw new IllegalArgumentException("from/to is incorrect");
+		if (condition == CONDITION.FROM_TO_DAY_OF_WEEK && ((fromDayOfWeek < 0 || fromDayOfWeek > 6) || (toDayOfWeek < 0 || toDayOfWeek > 6)))
 			throw new IllegalArgumentException("from/to is incorrect");
 	}
 }
