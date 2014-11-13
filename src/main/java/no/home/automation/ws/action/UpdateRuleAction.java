@@ -17,18 +17,22 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRuleResponse>
 {
-	private JdbcTemplate	jdbcTemplate	= null;
+	private DataSourceTransactionManager	txManager	= null;
 
-	public UpdateRuleAction(boolean mustBeAuthenticated, JdbcTemplate jdbcTemplate)
+	public UpdateRuleAction(boolean mustBeAuthenticated, DataSourceTransactionManager txManager)
 	{
 		super(mustBeAuthenticated);
-		this.jdbcTemplate = jdbcTemplate;
+
+		this.txManager = txManager;
 	}
 
 	@Override
@@ -59,6 +63,7 @@ public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRu
 	{
 		try
 		{
+			JdbcTemplate jdbcTemplate = new JdbcTemplate(txManager.getDataSource());
 			jdbcTemplate.update("DELETE FROM rule WHERE ruleId=?", rule.getId());
 			jdbcTemplate.update("DELETE FROM rule_then WHERE ruleId=?", rule.getId());
 			jdbcTemplate.update("DELETE FROM rule_condition WHERE ruleId=?", rule.getId());
@@ -74,104 +79,85 @@ public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRu
 
 	boolean createRule(Rule rule)
 	{
-		int ruleId = insertNewRule(rule);
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
 
-		if (ruleId == 0)
-			return false;
-
-		rule.setId(ruleId);
-		for (RuleThen ruleThen : rule.getThenList())
-		{
-			insertRuleThen(ruleId, ruleThen);
-		}
-
-		for (RuleCondition ruleCondition : rule.getConditionList())
-		{
-			insertRuleCondition(ruleId, ruleCondition);
-		}
-
-		return true;
-	}
-
-	int insertNewRule(Rule rule)
-	{
 		try
 		{
-			SimpleJdbcInsert simpleInsert = new SimpleJdbcInsert(jdbcTemplate);
-			simpleInsert.withTableName("rule");
-			simpleInsert.setGeneratedKeyName("RuleId");
+			insertNewRule(rule);
 
-			DateTimeFormatter fmt = DateTimeFormat.forPattern("HH:mm:ss");
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("Name", rule.getName());
-			parameters.put("Active", String.valueOf(rule.isActive()));
-			parameters.put("WhenDeviceId", rule.getWhenDeviceId());
-			parameters.put("WhenAction", rule.getWhenAction().toString());
-			parameters.put("WhenTime", rule.getWhenTime().toString(fmt));
+			for (RuleThen ruleThen : rule.getThenList())
+			{
+				insertRuleThen(rule.getId(), ruleThen);
+			}
 
-			Number id = simpleInsert.executeAndReturnKey(parameters);
-			return id.intValue();
-		}
-		catch (Exception ex)
-		{
-			logger.error("Could not add rule", ex);
-			return 0;
-		}
-	}
+			for (RuleCondition ruleCondition : rule.getConditionList())
+			{
+				insertRuleCondition(rule.getId(), ruleCondition);
+			}
 
-	boolean insertRuleThen(int ruleId, RuleThen ruleThen)
-	{
-		try
-		{
-			SimpleJdbcInsert simpleInsert = new SimpleJdbcInsert(jdbcTemplate);
-			simpleInsert.withTableName("rule_then");
-			simpleInsert.setGeneratedKeyName("Id");
-
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("RuleId", ruleId);
-			parameters.put("Action", ruleThen.getAction());
-			parameters.put("DeviceId", ruleThen.getDeviceId());
-			parameters.put("DimLevel", ruleThen.getDimLevel());
-
-			simpleInsert.execute(parameters);
-
+			txManager.commit(status);
 			return true;
 		}
 		catch (Exception ex)
 		{
-			logger.error("Could not insert rule then", ex);
+			txManager.rollback(status);
+			logger.error("Could not create rule", ex);
 			return false;
 		}
 	}
 
-	boolean insertRuleCondition(int ruleId, RuleCondition ruleCondition)
+	void insertNewRule(Rule rule)
 	{
-		try
-		{
-			SimpleJdbcInsert simpleInsert = new SimpleJdbcInsert(jdbcTemplate);
-			simpleInsert.withTableName("rule_condition");
-			simpleInsert.setGeneratedKeyName("Id");
+		SimpleJdbcInsert simpleInsert = new SimpleJdbcInsert(txManager.getDataSource());
+		simpleInsert.withTableName("rule");
+		simpleInsert.setGeneratedKeyName("RuleId");
 
-			DateTimeFormatter fmt = DateTimeFormat.forPattern("HH:mm:ss");
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("RuleId", ruleId);
-			parameters.put("ConditionTrigger", ruleCondition.getCondition().toString());
-			parameters.put("TimeOfDay", ruleCondition.getTimeOfDay().toString(fmt));
-			parameters.put("DayOfWeek", ruleCondition.getDayOfWeek());
-			parameters.put("DelayInMinutes", ruleCondition.getDelayInMinutes());
-			parameters.put("FromTime", ruleCondition.getFromTime().toString(fmt));
-			parameters.put("ToTime", ruleCondition.getToTime().toString(fmt));
-			parameters.put("FromDayOfWeek", ruleCondition.getFromDayOfWeek());
-			parameters.put("ToDayOfWeek", ruleCondition.getToDayOfWeek());
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("HH:mm:ss");
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("Name", rule.getName());
+		parameters.put("Active", String.valueOf(rule.isActive()));
+		parameters.put("WhenDeviceId", rule.getWhenDeviceId());
+		parameters.put("WhenAction", rule.getWhenAction().toString());
+		parameters.put("WhenTime", rule.getWhenTime().toString(fmt));
 
-			simpleInsert.execute(parameters);
+		Number id = simpleInsert.executeAndReturnKey(parameters);
+		rule.setId(id.intValue());
+	}
 
-			return true;
-		}
-		catch (Exception ex)
-		{
-			logger.error("Could not insert rule condition", ex);
-			return false;
-		}
+	void insertRuleThen(int ruleId, RuleThen ruleThen)
+	{
+
+		SimpleJdbcInsert simpleInsert = new SimpleJdbcInsert(txManager.getDataSource());
+		simpleInsert.withTableName("rule_then");
+		simpleInsert.setGeneratedKeyName("Id");
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("RuleId", ruleId);
+		parameters.put("Action", ruleThen.getAction());
+		parameters.put("DeviceId", ruleThen.getDeviceId());
+		parameters.put("DimLevel", ruleThen.getDimLevel());
+
+		simpleInsert.execute(parameters);
+	}
+
+	void insertRuleCondition(int ruleId, RuleCondition ruleCondition)
+	{
+		SimpleJdbcInsert simpleInsert = new SimpleJdbcInsert(txManager.getDataSource());
+		simpleInsert.withTableName("rule_condition");
+		simpleInsert.setGeneratedKeyName("Id");
+
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("HH:mm:ss");
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("RuleId", ruleId);
+		parameters.put("ConditionTrigger", ruleCondition.getCondition().toString());
+		parameters.put("TimeOfDay", ruleCondition.getTimeOfDay().toString(fmt));
+		parameters.put("DayOfWeek", ruleCondition.getDayOfWeek());
+		parameters.put("DelayInMinutes", ruleCondition.getDelayInMinutes());
+		parameters.put("FromTime", ruleCondition.getFromTime().toString(fmt));
+		parameters.put("ToTime", ruleCondition.getToTime().toString(fmt));
+		parameters.put("FromDayOfWeek", ruleCondition.getFromDayOfWeek());
+		parameters.put("ToDayOfWeek", ruleCondition.getToDayOfWeek());
+
+		simpleInsert.execute(parameters);
 	}
 }

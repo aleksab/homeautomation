@@ -25,6 +25,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.beust.jcommander.JCommander;
@@ -81,7 +82,7 @@ public class SentimentWs
 		});
 
 		RfxcomBusImpl bus = new RfxcomBusImpl();
-		//bus.startBus("COM7");
+		// bus.startBus("COM7");
 
 		XMLConfiguration config = new XMLConfiguration("config.xml");
 
@@ -95,6 +96,8 @@ public class SentimentWs
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
 		dataSource.setUrl(connectionString);
+
+		DataSourceTransactionManager txManager = new DataSourceTransactionManager(dataSource);
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 		post("/login", "application/json", new LoginAction(false), new JsonTransformer());
@@ -103,9 +106,9 @@ public class SentimentWs
 		post("/device/update", "application/json", new UpdateDeviceAction(false, jdbcTemplate), new JsonTransformer());
 		post("/device/search", "application/json", new SearchDevicesAction(false, bus), new JsonTransformer());
 		post("/device/command", "application/json", new SendCommandAction(false, bus, jdbcTemplate), new JsonTransformer());
-		
+
 		post("/rule/list", "application/json", new ListRulesAction(false, jdbcTemplate), new JsonTransformer());
-		post("/rule/update", "application/json", new UpdateRuleAction(false, jdbcTemplate), new JsonTransformer());
+		post("/rule/update", "application/json", new UpdateRuleAction(false, txManager), new JsonTransformer());
 
 		get("/throwexception", (request, response) -> {
 			throw new RuntimeException();
