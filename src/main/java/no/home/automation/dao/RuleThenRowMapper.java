@@ -14,6 +14,6 @@ public class RuleThenRowMapper implements ParameterizedRowMapper<RuleThen>
 	public RuleThen mapRow(ResultSet resultSet, int i) throws SQLException
 	{
 		return new RuleThen(resultSet.getInt("Id"), THEN.getEnum(resultSet.getString("Action")), resultSet.getInt("DeviceId"),
-				resultSet.getInt("DimLevel"));
+				resultSet.getInt("Value"));
 	}
 }

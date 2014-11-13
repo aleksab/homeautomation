@@ -11,6 +11,7 @@ import java.util.Base64;
 
 import no.home.automation.model.JsonTransformer;
 import no.home.automation.service.RfxcomBusImpl;
+import no.home.automation.service.RuleEngineImpl;
 import no.home.automation.ws.action.ListDevicesAction;
 import no.home.automation.ws.action.ListRulesAction;
 import no.home.automation.ws.action.LoginAction;
@@ -82,7 +83,7 @@ public class SentimentWs
 		});
 
 		RfxcomBusImpl bus = new RfxcomBusImpl();
-		bus.startBus("COM7");
+		// bus.startBus("COM7");
 
 		XMLConfiguration config = new XMLConfiguration("config.xml");
 
@@ -100,6 +101,8 @@ public class SentimentWs
 		DataSourceTransactionManager txManager = new DataSourceTransactionManager(dataSource);
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
+		RuleEngineImpl engine = new RuleEngineImpl(jdbcTemplate, bus);
+
 		post("/login", "application/json", new LoginAction(false), new JsonTransformer());
 
 		post("/device/list", "application/json", new ListDevicesAction(false, jdbcTemplate), new JsonTransformer());
@@ -108,7 +111,7 @@ public class SentimentWs
 		post("/device/command", "application/json", new SendCommandAction(false, bus, jdbcTemplate), new JsonTransformer());
 
 		post("/rule/list", "application/json", new ListRulesAction(false, jdbcTemplate), new JsonTransformer());
-		post("/rule/update", "application/json", new UpdateRuleAction(false, txManager), new JsonTransformer());
+		post("/rule/update", "application/json", new UpdateRuleAction(false, engine, txManager), new JsonTransformer());
 
 		get("/throwexception", (request, response) -> {
 			throw new RuntimeException();

@@ -10,6 +10,7 @@ import no.home.automation.model.RuleThen;
 import no.home.automation.model.UpdateRuleRequest;
 import no.home.automation.model.UpdateRuleRequest.TYPE;
 import no.home.automation.model.UpdateRuleResponse;
+import no.home.automation.service.RuleEngine;
 import no.home.automation.ws.LocalTimeTypeConverter;
 
 import org.joda.time.LocalTime;
@@ -27,11 +28,13 @@ import com.google.gson.GsonBuilder;
 public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRuleResponse>
 {
 	private DataSourceTransactionManager	txManager	= null;
+	private RuleEngine						engine		= null;
 
-	public UpdateRuleAction(boolean mustBeAuthenticated, DataSourceTransactionManager txManager)
+	public UpdateRuleAction(boolean mustBeAuthenticated, RuleEngine engine, DataSourceTransactionManager txManager)
 	{
 		super(mustBeAuthenticated);
 
+		this.engine = engine;
 		this.txManager = txManager;
 	}
 
@@ -41,7 +44,10 @@ public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRu
 		boolean result = false;
 
 		if (request.getType() == TYPE.ADD)
+		{
 			result = createRule(request.getRule());
+			engine.reloadEngine();
+		}
 		else if (request.getType() == TYPE.DELETE)
 			result = deleteRule(request.getRule());
 		else if (request.getType() == TYPE.EDIT)
@@ -135,7 +141,7 @@ public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRu
 		parameters.put("RuleId", ruleId);
 		parameters.put("Action", ruleThen.getAction());
 		parameters.put("DeviceId", ruleThen.getDeviceId());
-		parameters.put("DimLevel", ruleThen.getDimLevel());
+		parameters.put("Value", ruleThen.getValue());
 
 		simpleInsert.execute(parameters);
 	}

@@ -1,11 +1,10 @@
 package no.home.automation.model;
 
-
 public class RuleThen
 {
 	public enum THEN
 	{
-		ON, OFF, DIM;
+		ON, OFF, DIM, WAIT_OFF;
 
 		public static THEN getEnum(String name)
 		{
@@ -23,15 +22,15 @@ public class RuleThen
 	private int		id;
 	private THEN	action;
 	private int		deviceId;
-	private int		dimLevel;
+	private int		value;
 
-	public RuleThen(int id, THEN action, int deviceId, int dimLevel)
+	public RuleThen(int id, THEN action, int deviceId, int value)
 	{
 		super();
 		this.id = id;
 		this.action = action;
 		this.deviceId = deviceId;
-		this.dimLevel = dimLevel;
+		this.value = value;
 	}
 
 	public int getId()
@@ -64,14 +63,14 @@ public class RuleThen
 		this.deviceId = deviceId;
 	}
 
-	public int getDimLevel()
+	public int getValue()
 	{
-		return dimLevel;
+		return value;
 	}
 
-	public void setDimLevel(int dimLevel)
+	public void setValue(int value)
 	{
-		this.dimLevel = dimLevel;
+		this.value = value;
 	}
 
 	public void validate() throws IllegalArgumentException
