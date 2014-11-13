@@ -7,28 +7,28 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 public class Device
 {
+	private int		id;
 	private int		sensorId;
 	private int		unitCode;
 	private String	name;
-	private int		turnOffAfter;
 
-	public Device(int sensorId, int unitCode, String name, int turnOffAfter)
+	public Device(int id, int sensorId, int unitCode, String name)
 	{
 		super();
+		this.id = id;
 		this.sensorId = sensorId;
 		this.unitCode = unitCode;
 		this.name = name;
-		this.turnOffAfter = turnOffAfter;
 	}
 
-	public int getTurnOffAfter()
+	public int getId()
 	{
-		return turnOffAfter;
+		return id;
 	}
 
-	public void setTurnOffAfter(int turnOffAfter)
+	public void setId(int id)
 	{
-		this.turnOffAfter = turnOffAfter;
+		this.id = id;
 	}
 
 	public int getSensorId()

@@ -7,7 +7,6 @@ import no.home.automation.model.Device;
 import no.home.automation.model.SendCommandRequest;
 import no.home.automation.model.SendCommandRequest.TYPE;
 import no.home.automation.service.RfxcomBus;
-import no.home.automation.service.JobScheduler;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -18,7 +17,6 @@ public class SendCommandAction extends DefaultHandler<SendCommandRequest, Defaul
 {
 	private RfxcomBus		bus;
 	private JdbcTemplate	jdbcTemplate;
-	private JobScheduler	scheduler;
 
 	public SendCommandAction(boolean mustBeAuthenticated, RfxcomBus bus, JdbcTemplate jdbcTemplate)
 	{
@@ -44,9 +42,6 @@ public class SendCommandAction extends DefaultHandler<SendCommandRequest, Defaul
 			result = bus.sendLightDimCommand(device, request.getDimLevel());
 		else
 			result = false;
-
-		if (result && request.getType() != TYPE.OFF)
-			scheduler.scheduleLightOff(device);
 
 		return new DefaultReponse(result);
 	}

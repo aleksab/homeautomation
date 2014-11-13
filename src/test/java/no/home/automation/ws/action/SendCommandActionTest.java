@@ -32,7 +32,6 @@ public class SendCommandActionTest
 		Device device = Mockito.mock(Device.class);
 		Mockito.when(jdbcTemplate.queryForObject(Mockito.anyString(), Mockito.any(DeviceRowMapper.class), Mockito.anyInt(), Mockito.anyInt())).thenReturn(
 				device);
-		Mockito.when(device.getTurnOffAfter()).thenReturn(1);
 
 		action = new SendCommandAction(false, bus, jdbcTemplate);
 	}

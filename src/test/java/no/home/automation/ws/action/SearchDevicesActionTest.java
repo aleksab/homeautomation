@@ -35,7 +35,7 @@ public class SearchDevicesActionTest
 	@Test
 	public void testGetActiveDevices()
 	{
-		bus.sendLightEvents(2, 1);
+		bus.sendLightEvents(2, 1, true);
 		List<Device> devices = action.getActiveDevices();
 		Assert.assertEquals(3, devices.size());
 		bus.stopLightEvents();
@@ -44,9 +44,18 @@ public class SearchDevicesActionTest
 	@Test
 	public void testGetActiveDevices2()
 	{
-		bus.sendLightEvents(1, 1);
+		bus.sendLightEvents(1, 1, true);
 		List<Device> devices = action.getActiveDevices();
 		Assert.assertEquals(4, devices.size());
+		bus.stopLightEvents();
+	}
+	
+	@Test
+	public void testGetActiveDevices3()
+	{
+		bus.sendLightEvents(2, 1, false);
+		List<Device> devices = action.getActiveDevices();
+		Assert.assertEquals(1, devices.size());
 		bus.stopLightEvents();
 	}
 }

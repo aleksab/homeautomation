@@ -7,7 +7,7 @@ import java.util.List;
 
 import no.home.automation.model.Device;
 
-public class JobSchedulerImpl implements JobScheduler, Runnable
+public class JobSchedulerImpl implements Runnable
 {
 	private RfxcomBus		bus;
 	private List<OffTime>	devices;
@@ -25,30 +25,29 @@ public class JobSchedulerImpl implements JobScheduler, Runnable
 		scheduler.start();
 	}
 
-	@Override
 	public void scheduleLightOff(Device device)
 	{
-		if (device.getTurnOffAfter() != 0)
-		{
-			long expiredTime = System.currentTimeMillis() + (device.getTurnOffAfter() * 1000);
-			boolean found = false;
-
-			for (OffTime offTime : devices)
-			{
-				if (offTime.device.equals(device))
-				{
-					// update time
-					offTime.expireTime = expiredTime;
-					found = true;
-					break;
-				}
-			}
-
-			if (!found)
-			{
-				devices.add(new OffTime(device, expiredTime));
-			}
-		}
+		// if (device.getTurnOffAfter() != 0)
+		// {
+		// long expiredTime = System.currentTimeMillis() + (device.getTurnOffAfter() * 1000);
+		// boolean found = false;
+		//
+		// for (OffTime offTime : devices)
+		// {
+		// if (offTime.device.equals(device))
+		// {
+		// // update time
+		// offTime.expireTime = expiredTime;
+		// found = true;
+		// break;
+		// }
+		// }
+		//
+		// if (!found)
+		// {
+		// devices.add(new OffTime(device, expiredTime));
+		// }
+		// }
 	}
 
 	@Override

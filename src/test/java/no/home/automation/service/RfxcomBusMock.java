@@ -52,7 +52,7 @@ public class RfxcomBusMock implements RfxcomBus
 		return true;
 	}
 
-	public void sendLightEvents(int startSeconds, int secondsIntveral)
+	public void sendLightEvents(int startSeconds, int secondsIntveral, boolean uniqueSensors)
 	{
 		if (sendLightEvents)
 			return;
@@ -66,12 +66,12 @@ public class RfxcomBusMock implements RfxcomBus
 				try
 				{
 					Thread.sleep(startSeconds * 1000);
-
+					int counter = 1;
 					while (sendLightEvents)
 					{
 						RFXComLighting2Message message = new RFXComLighting2Message();
 						message.unitcode = 12;
-						message.sensorId = 1234;
+						message.sensorId = counter;
 						message.packetType = PacketType.LIGHTING2;
 						message.rawMessage = "TEST".getBytes();
 
@@ -80,6 +80,9 @@ public class RfxcomBusMock implements RfxcomBus
 						{
 							listener.packetReceived(message);
 						}
+
+						if (uniqueSensors)
+							counter++;
 
 						Thread.sleep(secondsIntveral * 1000);
 					}

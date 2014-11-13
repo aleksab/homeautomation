@@ -30,14 +30,13 @@ public class UpdateDeviceAction extends DefaultHandler<UpdateDeviceRequest, Upda
 	{
 		boolean result = false;
 		if (request.getType() == TYPE.DELETE)
-			result = deleteDevice(request.getSensorId(), request.getUnitCode());
+			result = deleteDevice(request.getDevice());
 		else if (request.getType() == TYPE.ADD)
-			result = createNewDevice(request.getSensorId(), request.getUnitCode(), request.getName());
+			result = createNewDevice(request.getDevice());
 		else if (request.getType() == TYPE.RENAME)
-			result = updateDevice(request.getSensorId(), request.getUnitCode(), request.getName());
+			result = updateDevice(request.getDevice());
 
-		return new UpdateDeviceResponse(new Device(request.getSensorId(), request.getUnitCode(), request.getName(), request.getTurnOffAfter()),
-				result);
+		return new UpdateDeviceResponse(request.getDevice(), result);
 	}
 
 	@Override
@@ -48,11 +47,25 @@ public class UpdateDeviceAction extends DefaultHandler<UpdateDeviceRequest, Upda
 		return gson.fromJson(json, UpdateDeviceRequest.class);
 	}
 
-	boolean deleteDevice(int sensorId, int unitCode)
+	boolean deleteDevice(Device device)
 	{
 		try
 		{
-			jdbcTemplate.update("DELETE FROM device WHERE sensorId=? and unitCode=?", sensorId, unitCode);
+			jdbcTemplate.update("DELETE FROM device WHERE id=?", device.getId());
+			return true;
+		}
+		catch (Exception ex)
+		{
+			logger.error("Could not delete device", ex);
+			return false;
+		}
+	}
+
+	boolean updateDevice(Device device)
+	{
+		try
+		{
+			jdbcTemplate.update("UPDATE device SET name=? WHERE id=?", device.getName(), device.getId());
 			return true;
 		}
 		catch (Exception ex)
@@ -62,21 +75,7 @@ public class UpdateDeviceAction extends DefaultHandler<UpdateDeviceRequest, Upda
 		}
 	}
 
-	boolean updateDevice(int sensorId, int unitCode, String name)
-	{
-		try
-		{
-			jdbcTemplate.update("UPDATE device SET name=? WHERE sensorId=? and unitCode=?", name, sensorId, unitCode);
-			return true;
-		}
-		catch (Exception ex)
-		{
-			logger.error("Could not update device", ex);
-			return false;
-		}
-	}
-
-	boolean createNewDevice(int sensorId, int unitCode, String name)
+	boolean createNewDevice(Device device)
 	{
 		try
 		{
@@ -85,11 +84,13 @@ public class UpdateDeviceAction extends DefaultHandler<UpdateDeviceRequest, Upda
 			simpleInsert.setGeneratedKeyName("id");
 
 			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("sensorId", sensorId);
-			parameters.put("unitCode", unitCode);
-			parameters.put("name", name);
+			parameters.put("sensorId", device.getSensorId());
+			parameters.put("unitCode", device.getUnitCode());
+			parameters.put("name", device.getName());
 
-			simpleInsert.execute(parameters);
+			int id = simpleInsert.executeAndReturnKey(parameters).intValue();
+			device.setId(id);
+
 			return true;
 		}
 		catch (Exception ex)

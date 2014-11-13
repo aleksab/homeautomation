@@ -12,10 +12,12 @@ import java.util.Base64;
 import no.home.automation.model.JsonTransformer;
 import no.home.automation.service.RfxcomBusImpl;
 import no.home.automation.ws.action.ListDevicesAction;
+import no.home.automation.ws.action.ListRulesAction;
 import no.home.automation.ws.action.LoginAction;
 import no.home.automation.ws.action.SearchDevicesAction;
 import no.home.automation.ws.action.SendCommandAction;
 import no.home.automation.ws.action.UpdateDeviceAction;
+import no.home.automation.ws.action.UpdateRuleAction;
 
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang.StringUtils;
@@ -101,6 +103,9 @@ public class SentimentWs
 		post("/device/update", "application/json", new UpdateDeviceAction(false, jdbcTemplate), new JsonTransformer());
 		post("/device/search", "application/json", new SearchDevicesAction(false, bus), new JsonTransformer());
 		post("/device/command", "application/json", new SendCommandAction(false, bus, jdbcTemplate), new JsonTransformer());
+		
+		post("/rule/list", "application/json", new ListRulesAction(false, jdbcTemplate), new JsonTransformer());
+		post("/rule/update", "application/json", new UpdateRuleAction(false, jdbcTemplate), new JsonTransformer());
 
 		get("/throwexception", (request, response) -> {
 			throw new RuntimeException();

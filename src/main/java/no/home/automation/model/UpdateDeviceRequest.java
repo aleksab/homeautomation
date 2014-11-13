@@ -10,29 +10,13 @@ public class UpdateDeviceRequest extends RequestValidator
 	};
 
 	private TYPE	type;
-	private int		sensorId;
-	private int		unitCode;
-	private String	name;
-	private int		turnOffAfter;
+	private Device	device;
 
-	public UpdateDeviceRequest(TYPE type, int sensorId, int unitCode, String name, int turnOffAfter)
+	public UpdateDeviceRequest(TYPE type, Device device)
 	{
 		super();
 		this.type = type;
-		this.sensorId = sensorId;
-		this.unitCode = unitCode;
-		this.name = name;
-		this.turnOffAfter = turnOffAfter;
-	}
-
-	public int getTurnOffAfter()
-	{
-		return turnOffAfter;
-	}
-
-	public void setTurnOffAfter(int turnOffAfter)
-	{
-		this.turnOffAfter = turnOffAfter;
+		this.device = device;
 	}
 
 	public TYPE getType()
@@ -45,44 +29,26 @@ public class UpdateDeviceRequest extends RequestValidator
 		this.type = type;
 	}
 
-	public int getSensorId()
+	public Device getDevice()
 	{
-		return sensorId;
+		return device;
 	}
 
-	public void setSensorId(int sensorId)
+	public void setDevice(Device device)
 	{
-		this.sensorId = sensorId;
-	}
-
-	public int getUnitCode()
-	{
-		return unitCode;
-	}
-
-	public void setUnitCode(int unitCode)
-	{
-		this.unitCode = unitCode;
-	}
-
-	public String getName()
-	{
-		return name;
-	}
-
-	public void setName(String name)
-	{
-		this.name = name;
+		this.device = device;
 	}
 
 	@Override
 	public void validateRequest() throws IllegalArgumentException
 	{
-		if (sensorId == 0)
+		if (device.getId() == 0 && type != TYPE.ADD)
+			throw new IllegalArgumentException("deviceId is missing");
+		if (device.getUnitCode() == 0 && type == TYPE.ADD)
 			throw new IllegalArgumentException("unitCode is missing");
-		if (sensorId == 0)
+		if (device.getSensorId() == 0 && type == TYPE.ADD)
 			throw new IllegalArgumentException("unitId is missing");
-		if (StringUtils.isEmpty(name))
-			throw new IllegalArgumentException("NAme is missing");
+		if (StringUtils.isEmpty(device.getName()) && type != TYPE.DELETE)
+			throw new IllegalArgumentException("Name is missing");
 	}
 }
