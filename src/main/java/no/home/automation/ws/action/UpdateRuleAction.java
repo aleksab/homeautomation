@@ -158,7 +158,6 @@ public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRu
 		parameters.put("ConditionTrigger", ruleCondition.getCondition().toString());
 		parameters.put("TimeOfDay", ruleCondition.getTimeOfDay().toString(fmt));
 		parameters.put("DayOfWeek", ruleCondition.getDayOfWeek());
-		parameters.put("DelayInMinutes", ruleCondition.getDelayInMinutes());
 		parameters.put("FromTime", ruleCondition.getFromTime().toString(fmt));
 		parameters.put("ToTime", ruleCondition.getToTime().toString(fmt));
 		parameters.put("FromDayOfWeek", ruleCondition.getFromDayOfWeek());

@@ -13,11 +13,10 @@ public class RuleConditionRowMapper implements ParameterizedRowMapper<RuleCondit
 {
 	@Override
 	public RuleCondition mapRow(ResultSet resultSet, int i) throws SQLException
-	{		
-		return new RuleCondition(resultSet.getInt("Id"), CONDITION.getEnum(resultSet.getString("Condition")),
-				getTime(resultSet.getString("TimeOfDay")), resultSet.getInt("DayOfWeek"), resultSet.getInt("DelayInMinutes"),
-				getTime(resultSet.getString("FromTime")), getTime(resultSet.getString("ToTime")), resultSet.getInt("FromDayOfWeek"),
-				resultSet.getInt("ToDayOfWeek"));
+	{
+		return new RuleCondition(resultSet.getInt("Id"), CONDITION.getEnum(resultSet.getString("ConditionTrigger")),
+				getTime(resultSet.getString("TimeOfDay")), resultSet.getInt("DayOfWeek"), getTime(resultSet.getString("FromTime")),
+				getTime(resultSet.getString("ToTime")), resultSet.getInt("FromDayOfWeek"), resultSet.getInt("ToDayOfWeek"));
 	}
 
 	private LocalTime getTime(String input)

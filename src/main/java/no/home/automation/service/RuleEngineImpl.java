@@ -29,7 +29,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 public class RuleEngineImpl implements Runnable, RuleEngine, RfxcomEventListener
 {
-	private static final Logger	logger	= LoggerFactory.getLogger("stdoutLogger");
+	private static final Logger	logger		= LoggerFactory.getLogger("stdoutLogger");
 
 	private JdbcTemplate		jdbcTemplate;
 	private Scheduler			scheduler;
@@ -38,6 +38,8 @@ public class RuleEngineImpl implements Runnable, RuleEngine, RfxcomEventListener
 	private List<Rule>			timeRules;
 	private List<Rule>			onRules;
 	private List<Rule>			offRules;
+
+	private boolean				keepRunning	= false;
 
 	public RuleEngineImpl(JdbcTemplate jdbcTemplate, RfxcomBus bus)
 	{
@@ -61,6 +63,9 @@ public class RuleEngineImpl implements Runnable, RuleEngine, RfxcomEventListener
 
 		// listen to timer
 		scheduler.start();
+
+		keepRunning = true;
+		new Thread(this).start();
 	}
 
 	public void reloadEngine()
@@ -86,20 +91,34 @@ public class RuleEngineImpl implements Runnable, RuleEngine, RfxcomEventListener
 		bus.removeEventListener(this);
 
 		scheduler.stop();
+
+		keepRunning = false;
 	}
 
 	@Override
 	public void run()
 	{
-		for (Rule rule : timeRules)
+		while (keepRunning)
 		{
-			LocalTime now = LocalTime.now();
-			LocalTime time = rule.getWhenTime();
-
-			if (now.getHourOfDay() == time.getHourOfDay() && now.getMinuteOfHour() == time.getMinuteOfHour())
+			logger.info("Checking time rules {}", timeRules.size());
+			for (Rule rule : timeRules)
 			{
-				Device device = findDevice(rule.getWhenDeviceId());
-				triggerRule(device, rule);
+				LocalTime now = LocalTime.now();
+				LocalTime time = rule.getWhenTime();
+
+				if (now.getHourOfDay() == time.getHourOfDay() && now.getMinuteOfHour() == time.getMinuteOfHour())
+				{
+					Device device = findDevice(rule.getWhenDeviceId());
+					triggerRule(device, rule);
+				}
+			}
+
+			try
+			{
+				Thread.sleep(1000 * 60);
+			}
+			catch (InterruptedException e)
+			{
 			}
 		}
 	}
@@ -148,6 +167,8 @@ public class RuleEngineImpl implements Runnable, RuleEngine, RfxcomEventListener
 					logger.info("All conditions for rule {} are ok, so performing actions", rule.getId());
 					triggerAction(rule.getThenList());
 				}
+				else
+					logger.info("Not all conditions are ok, so not doing action");
 			}
 		}).start();
 	}
@@ -191,7 +212,7 @@ public class RuleEngineImpl implements Runnable, RuleEngine, RfxcomEventListener
 		else if (condition.getCondition() == CONDITION.FROM_TO_DAY_OF_WEEK)
 		{
 			int now = DateTime.now().getDayOfWeek();
-			return (condition.getFromDayOfWeek() >= now && now <= condition.getToDayOfWeek());
+			return (condition.getFromDayOfWeek() <= now && now <= condition.getToDayOfWeek());
 		}
 		else if (condition.getCondition() == CONDITION.FROM_TO_TIME)
 		{
@@ -215,6 +236,12 @@ public class RuleEngineImpl implements Runnable, RuleEngine, RfxcomEventListener
 		for (RuleThen rule : thenList)
 		{
 			Device device = findDevice(rule.getDeviceId());
+			if (device == null)
+			{
+				logger.error("Could not find device {}", rule.getDeviceId());
+				continue;
+			}
+
 			if (rule.getAction() == THEN.ON)
 				bus.sendLightOnCommand(device);
 			else if (rule.getAction() == THEN.OFF)

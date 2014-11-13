@@ -25,21 +25,19 @@ public class RuleCondition
 	private CONDITION	condition;
 	private LocalTime	timeOfDay;
 	private int			dayOfWeek;
-	private int			delayInMinutes;
 	private LocalTime	fromTime;
 	private LocalTime	toTime;
 	private int			fromDayOfWeek;
 	private int			toDayOfWeek;
 
-	public RuleCondition(int id, CONDITION condition, LocalTime timeOfDay, int dayOfWeek, int delayInMinutes, LocalTime fromTime, LocalTime toTime,
-			int fromDayOfWeek, int toDayOfWeek)
+	public RuleCondition(int id, CONDITION condition, LocalTime timeOfDay, int dayOfWeek, LocalTime fromTime, LocalTime toTime, int fromDayOfWeek,
+			int toDayOfWeek)
 	{
 		super();
 		this.id = id;
 		this.condition = condition;
 		this.timeOfDay = timeOfDay;
 		this.dayOfWeek = dayOfWeek;
-		this.delayInMinutes = delayInMinutes;
 		this.fromTime = fromTime;
 		this.toTime = toTime;
 		this.fromDayOfWeek = fromDayOfWeek;
@@ -84,16 +82,6 @@ public class RuleCondition
 	public void setDayOfWeek(int dayOfWeek)
 	{
 		this.dayOfWeek = dayOfWeek;
-	}
-
-	public int getDelayInMinutes()
-	{
-		return delayInMinutes;
-	}
-
-	public void setDelayInMinutes(int delayInMinutes)
-	{
-		this.delayInMinutes = delayInMinutes;
 	}
 
 	public LocalTime getFromTime()
@@ -142,8 +130,6 @@ public class RuleCondition
 			throw new IllegalArgumentException("timeOfDay is missing");
 		if (condition == CONDITION.DAY_OF_WEEK && (dayOfWeek < 0 || dayOfWeek > 6))
 			throw new IllegalArgumentException("dayOfWeek is incorrect");
-		if (condition == CONDITION.DELAY_MINUTES && (delayInMinutes <= 0 || delayInMinutes > 360))
-			throw new IllegalArgumentException("delayInMinutes is incorrect");
 		if (condition == CONDITION.FROM_TO_TIME && (fromTime == null || toTime == null))
 			throw new IllegalArgumentException("from/to is incorrect");
 		if (condition == CONDITION.FROM_TO_DAY_OF_WEEK && ((fromDayOfWeek < 0 || fromDayOfWeek > 6) || (toDayOfWeek < 0 || toDayOfWeek > 6)))

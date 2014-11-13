@@ -83,7 +83,7 @@ public class SentimentWs
 		});
 
 		RfxcomBusImpl bus = new RfxcomBusImpl();
-		// bus.startBus("COM7");
+		bus.startBus("COM7");
 
 		XMLConfiguration config = new XMLConfiguration("config.xml");
 
@@ -102,7 +102,8 @@ public class SentimentWs
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 		RuleEngineImpl engine = new RuleEngineImpl(jdbcTemplate, bus);
-
+		engine.startEngine();
+		
 		post("/login", "application/json", new LoginAction(false), new JsonTransformer());
 
 		post("/device/list", "application/json", new ListDevicesAction(false, jdbcTemplate), new JsonTransformer());
