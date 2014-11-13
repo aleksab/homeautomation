@@ -40,17 +40,20 @@ public class UpdateRuleRequest extends RequestValidator
 	@Override
 	public void validateRequest() throws IllegalArgumentException
 	{
-		if (rule.getWhenDeviceId() == 0)
+		if (rule.getWhenDeviceId() == 0 && type != TYPE.DELETE)
 			throw new IllegalArgumentException("whenDeviceId is missing");
-		if (rule.getThenList() == null && rule.getThenList().size() == 0)
+		if (type != TYPE.DELETE && (rule.getThenList() == null || rule.getThenList().size() == 0))
 			throw new IllegalArgumentException("then list is empty");
-		if (rule.getConditionList() == null && rule.getConditionList().size() == 0)
+		if (type != TYPE.DELETE && (rule.getConditionList() == null || rule.getConditionList().size() == 0))
 			throw new IllegalArgumentException("condition list is empty");
 
-		for (RuleThen rule : rule.getThenList())
-			rule.validate();
+		if (type != TYPE.DELETE)
+		{
+			for (RuleThen rule : rule.getThenList())
+				rule.validate();
 
-		for (RuleCondition rule : rule.getConditionList())
-			rule.validate();
+			for (RuleCondition rule : rule.getConditionList())
+				rule.validate();
+		}
 	}
 }
