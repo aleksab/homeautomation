@@ -88,7 +88,7 @@ public class AutomationWs
 		});
 
 		RfxcomBusImpl bus = new RfxcomBusImpl();
-		//bus.startBus("COM7");
+		bus.startBus("COM7");
 
 		XMLConfiguration config = new XMLConfiguration("config.xml");
 
