@@ -99,7 +99,12 @@ public class AutomationWs
 		RfxcomBusImpl bus = new RfxcomBusImpl();
 
 		if (!noConnectUsb)
+		{
 			bus.startBus(usbPort);
+			logger.info("Connected to rfxcom");
+		}
+		else
+			logger.info("Not connecting to rfxcom");
 
 		XMLConfiguration config = new XMLConfiguration("config.xml");
 		String databaseHost = config.getString("database.host", "");
@@ -119,7 +124,12 @@ public class AutomationWs
 		RuleEngineImpl engine = new RuleEngineImpl(jdbcTemplate, bus);
 
 		if (!noRulesEngine)
+		{
 			engine.startEngine();
+			logger.info("Started rule engine");
+		}
+		else
+			logger.info("Not starting rule engine");
 
 		post("/login", "application/json", new LoginAction(false), new JsonTransformer());
 
