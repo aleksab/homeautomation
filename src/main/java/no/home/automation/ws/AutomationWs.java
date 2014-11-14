@@ -34,10 +34,19 @@ import com.beust.jcommander.Parameter;
 
 public class AutomationWs
 {
-	private static final Logger	logger	= LoggerFactory.getLogger("stdoutLogger");
+	private static final Logger	logger		= LoggerFactory.getLogger("stdoutLogger");
 
 	@Parameter(names = "-port", description = "Webservice port")
-	private int					port	= 5300;
+	private int					port		= 5300;
+
+	@Parameter(names = "-usb", description = "Usb rfxcom port")
+	private String				usbPort		= "COM7";
+
+	@Parameter(names = "-connect", description = "Connect to rfxcom")
+	private boolean				connectUsb	= true;
+
+	@Parameter(names = "-rules", description = "Run rule engine")
+	private boolean				rulesEngine	= true;
 
 	public static void main(String[] args) throws Exception
 	{
@@ -88,10 +97,11 @@ public class AutomationWs
 		});
 
 		RfxcomBusImpl bus = new RfxcomBusImpl();
-		bus.startBus("COM7");
+
+		if (connectUsb)
+			bus.startBus(usbPort);
 
 		XMLConfiguration config = new XMLConfiguration("config.xml");
-
 		String databaseHost = config.getString("database.host", "");
 		String databaseName = config.getString("database.name", "");
 		String databaseUsername = config.getString("database.username", "");
@@ -107,7 +117,9 @@ public class AutomationWs
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 		RuleEngineImpl engine = new RuleEngineImpl(jdbcTemplate, bus);
-		engine.startEngine();
+
+		if (rulesEngine)
+			engine.startEngine();
 
 		post("/login", "application/json", new LoginAction(false), new JsonTransformer());
 
