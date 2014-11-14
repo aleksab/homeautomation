@@ -43,10 +43,10 @@ public class AutomationWs
 	private String				usbPort			= "COM7";
 
 	@Parameter(names = "-noconnect", description = "Do not connect to rfxcom")
-	private boolean				noConnectUsb	= true;
+	private boolean				noConnectUsb	= false;
 
 	@Parameter(names = "-norules", description = "Do not run rule engine")
-	private boolean				noRulesEngine	= true;
+	private boolean				noRulesEngine	= false;
 
 	public static void main(String[] args) throws Exception
 	{
