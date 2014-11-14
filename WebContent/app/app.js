@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngRoute', 'ngSanitize', 'pascalprecht.translate','mgcrea.ngStrap']);
+var app = angular.module('kiwi', ['ngRoute', 'ngSanitize', 'pascalprecht.translate','mgcrea.ngStrap']);
 
 app.value('varRestBase', 'rest/');
 app.value('availableLanguages', ['en','no']);
