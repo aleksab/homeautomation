@@ -32,7 +32,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-public class SentimentWs
+public class AutomationWs
 {
 	private static final Logger	logger	= LoggerFactory.getLogger("stdoutLogger");
 
@@ -42,15 +42,15 @@ public class SentimentWs
 	public static void main(String[] args) throws Exception
 	{
 		PropertyConfigurator.configure("log4j.properties");
-		new SentimentWs(args);
+		new AutomationWs(args);
 	}
 
-	public SentimentWs()
+	public AutomationWs()
 	{
 
 	}
 
-	public SentimentWs(String[] args) throws Exception
+	public AutomationWs(String[] args) throws Exception
 	{
 		new JCommander(this, args);
 
@@ -67,6 +67,11 @@ public class SentimentWs
 		}, new JsonTransformer());
 
 		before((request, response) -> {
+
+			response.header("Access-Control-Allow-Origin", "*");
+			response.header("Access-Control-Request-Method", "*");
+			response.header("Access-Control-Allow-Headers", "*");
+
 			boolean authenticated = false;
 
 			String authHeader = request.headers("Authorization");
@@ -103,7 +108,7 @@ public class SentimentWs
 
 		RuleEngineImpl engine = new RuleEngineImpl(jdbcTemplate, bus);
 		engine.startEngine();
-		
+
 		post("/login", "application/json", new LoginAction(false), new JsonTransformer());
 
 		post("/device/list", "application/json", new ListDevicesAction(false, jdbcTemplate), new JsonTransformer());

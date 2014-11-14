@@ -21,6 +21,7 @@ public class JsonTransformer implements ResponseTransformer
 
 	public JsonTransformer()
 	{
+		
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapter(DateTime.class, new DateTimeTypeConverter());
 		gsonBuilder.registerTypeAdapter(LocalTime.class, new LocalTimeTypeConverter());
