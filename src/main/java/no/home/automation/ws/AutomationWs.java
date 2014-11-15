@@ -6,8 +6,11 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.SparkBase.setPort;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.URLEncoder;
 import java.util.Base64;
+import java.util.Scanner;
 
 import no.home.automation.model.JsonTransformer;
 import no.home.automation.service.RfxcomBusImpl;
@@ -131,6 +134,8 @@ public class AutomationWs
 		else
 			logger.info("Not starting rule engine");
 
+		get("/usage", (req, res) -> getFileContent(new File("src/main/resources/no/home/automation/ws/usage.txt")));
+
 		post("/login", "application/json", new LoginAction(false), new JsonTransformer());
 
 		post("/device/list", "application/json", new ListDevicesAction(false, jdbcTemplate), new JsonTransformer());
@@ -186,5 +191,25 @@ public class AutomationWs
 		{
 			return null;
 		}
+	}
+
+	private String getFileContent(File file)
+	{
+		StringBuffer buffer = new StringBuffer();
+
+		try (Scanner scanner = new Scanner(new FileInputStream(file), "ISO-8859-1"))
+		{
+			while (scanner.hasNextLine())
+			{
+				String input = scanner.nextLine();
+				buffer.append(input + "\n");
+			}
+		}
+		catch (Exception ex)
+		{
+			logger.error("Could not read content for file " + file.getAbsolutePath(), ex);
+		}
+
+		return buffer.toString();
 	}
 }

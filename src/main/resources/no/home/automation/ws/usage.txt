@@ -1,0 +1,105 @@
+Short usage for webservice<br/><br/>
+
+<h2>List devices</h2>
+Method: POST<br/>
+Path: /device/list<br/>
+Description: Get a list of all devices that are configured<br/>
+Input:
+<pre>
+{
+category: "", // NOT IMPLEMENTED
+}
+</pre>
+<hr>
+
+<h2>Update device</h2>
+Method: POST<br/>
+Path: /device/update<br/>
+Description: Add, delete or rename a device<br/>
+Input:
+<pre>
+{
+type: ADD|DELETE|RENAME,		// which action
+device: {
+		id: "int",		// id for device (if delete or rename)
+		sensorId: "int",	// sensorId
+		unitCode: "int",	// which button on the sensor
+		name: "string"  	// name of device		
+		}	
+}
+</pre>
+<hr>
+
+<h2>Search for device</h2>
+Method: POST<br/>
+Path: /device/search<br/>
+Description: This will search for devices that sends an output. The method will search for 5 seconds before returning<br/>
+Input:
+<pre>
+{
+shouldShowKnownDevices: true|false, // if we should include known devices in the result
+}
+</pre>
+<hr>
+
+<h2>Send command</h2>
+Method: POST<br/>
+Path: /device/command<br/>
+Description: Send a command to a device<br/>
+Input:
+<pre>
+{
+type: ON|OFF|DIM,	// which command to send
+sensorId: "int"		// sensorId
+unitCode: "int"		// which button on the sensor
+dimLevel: "int" 	// between 0 and 100 if dim is used
+}
+</pre>
+<hr>
+
+<h2>List rules</h2>
+Method: POST<br/>
+Path: /rule/list<br/>
+Description: List all rules<br/>
+Input:
+<pre>
+{
+category: "", // NOT IMPLEMENTED
+}
+</pre>
+<hr>
+
+<h2>Update rules</h2>
+Method: POST<br/>
+Path: /rule/update<br/>
+Description: Add, delete or rename a rule<br/>
+Input:
+<pre>
+{
+type: ADD|DELETE|EDIT, 			// which action to perform
+rule: {
+		id: "int",			// if for rule (for delete and edit)
+		name: "string",			// name of rule
+		active: true|false,		// if rule is enabled or not
+		whenDeviceId: "int",		// which device to trigger rule on
+		whenAction: ON|OFF|TIME,	// when the trigger should kick in. On light on, off or a specific time
+		whenTime: "HH:mm:ss",		// if TIME is used for action then this specified the time of day when trigger should kick in
+		thenList: {		// list of actions to apply when rule is triggered
+				id: "int",			// id of then
+				action: ON|OFF|DIM|WAIT_OFF,	// which action to apply. Turn light on, off, dim the light of wait a specific time before turning off
+				deviceId: "int",		// which device this should be applied for
+				value: "int"			// dim level or minutes to wait (WAIT_OFF)
+		},
+		conditionList: {	// list of condition that must be valid for actions to be applied
+				id: "int",		// id of condition
+				condition: TIME_OF_DAY|DAY_OF_WEEK|DELAY_MINUTES|FROM_TO_TIME|FROM_TO_DAY_OF_WEEK,	// which condition to use.
+				timeOfDay: "HH:mm:ss",	// what time of day
+				dayOfWeek: "1-7",	// which day of the week
+				fromTime: "HH:mm:ss",	// from time
+				toTime: "HH:mm:ss",	// to time
+				fromDayOfWeek: "1-7", 	//from day of the week
+				toDayOfWeek: "1-7"	// to day of the week
+		}
+}
+</pre>
+<hr>
