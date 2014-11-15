@@ -58,7 +58,8 @@ public abstract class DefaultHandler<T extends RequestValidator, V> implements R
 		}
 
 		try
-		{
+		{			
+			response.type("application/json");
 			return doHandle(incomingRequest);
 		}
 		catch (Exception ex)

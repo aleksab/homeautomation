@@ -32,25 +32,34 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-public class SentimentWs
+public class AutomationWs
 {
-	private static final Logger	logger	= LoggerFactory.getLogger("stdoutLogger");
+	private static final Logger	logger			= LoggerFactory.getLogger("stdoutLogger");
 
 	@Parameter(names = "-port", description = "Webservice port")
-	private int					port	= 5300;
+	private int					port			= 5300;
+
+	@Parameter(names = "-usb", description = "Usb rfxcom port")
+	private String				usbPort			= "COM7";
+
+	@Parameter(names = "-noconnect", description = "Do not connect to rfxcom")
+	private boolean				noConnectUsb	= false;
+
+	@Parameter(names = "-norules", description = "Do not run rule engine")
+	private boolean				noRulesEngine	= false;
 
 	public static void main(String[] args) throws Exception
 	{
 		PropertyConfigurator.configure("log4j.properties");
-		new SentimentWs(args);
+		new AutomationWs(args);
 	}
 
-	public SentimentWs()
+	public AutomationWs()
 	{
 
 	}
 
-	public SentimentWs(String[] args) throws Exception
+	public AutomationWs(String[] args) throws Exception
 	{
 		new JCommander(this, args);
 
@@ -67,6 +76,11 @@ public class SentimentWs
 		}, new JsonTransformer());
 
 		before((request, response) -> {
+
+			response.header("Access-Control-Allow-Origin", "*");
+			response.header("Access-Control-Request-Method", "*");
+			response.header("Access-Control-Allow-Headers", "*");
+
 			boolean authenticated = false;
 
 			String authHeader = request.headers("Authorization");
@@ -83,10 +97,16 @@ public class SentimentWs
 		});
 
 		RfxcomBusImpl bus = new RfxcomBusImpl();
-		bus.startBus("COM7");
+
+		if (!noConnectUsb)
+		{
+			bus.startBus(usbPort);
+			logger.info("Connected to rfxcom");
+		}
+		else
+			logger.info("Not connecting to rfxcom");
 
 		XMLConfiguration config = new XMLConfiguration("config.xml");
-
 		String databaseHost = config.getString("database.host", "");
 		String databaseName = config.getString("database.name", "");
 		String databaseUsername = config.getString("database.username", "");
@@ -102,8 +122,15 @@ public class SentimentWs
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 		RuleEngineImpl engine = new RuleEngineImpl(jdbcTemplate, bus);
-		engine.startEngine();
-		
+
+		if (!noRulesEngine)
+		{
+			engine.startEngine();
+			logger.info("Started rule engine");
+		}
+		else
+			logger.info("Not starting rule engine");
+
 		post("/login", "application/json", new LoginAction(false), new JsonTransformer());
 
 		post("/device/list", "application/json", new ListDevicesAction(false, jdbcTemplate), new JsonTransformer());

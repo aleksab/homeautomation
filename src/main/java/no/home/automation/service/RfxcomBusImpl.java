@@ -89,11 +89,11 @@ public class RfxcomBusImpl implements RfxcomBus, RFXComEventListener
 		{
 			connector = new RFXComSerialConnector();
 			connector.connect(port);
-			logger.debug("Connected to RFXCom");
+			logger.debug("Connected to RFXCom: " + port);
 		}
 		catch (Exception ex)
 		{
-			logger.error("Could not connect to RFXCom", ex);
+			logger.error("Could not connect to RFXCom: " + port, ex);
 			connector = null;
 		}
 
