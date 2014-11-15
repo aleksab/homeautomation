@@ -23,8 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public class RFXComSerialConnector implements RFXComConnectorInterface
 {
-
-	private static final Logger					logger			= LoggerFactory.getLogger(RFXComSerialConnector.class);
+	private static final Logger					logger			= LoggerFactory.getLogger("fileLogger");
 
 	private static List<RFXComEventListener>	_listeners		= new ArrayList<RFXComEventListener>();
 
@@ -35,7 +34,7 @@ public class RFXComSerialConnector implements RFXComConnectorInterface
 
 	public RFXComSerialConnector()
 	{
-		logger.debug("Start");		
+		logger.debug("Start");
 	}
 
 	public void connect(String device) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, IOException
