@@ -8,7 +8,7 @@ public class SearchDeviceResponse extends DefaultReponse
 
 	public SearchDeviceResponse(List<Device> devices)
 	{
-		super();
+		super(true);
 		this.devices = devices;
 	}
 

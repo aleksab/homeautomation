@@ -44,14 +44,17 @@ public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRu
 		boolean result = false;
 
 		if (request.getType() == TYPE.ADD)
-		{
 			result = createRule(request.getRule());
-			engine.reloadEngine();
-		}
 		else if (request.getType() == TYPE.DELETE)
 			result = deleteRule(request.getRule());
 		else if (request.getType() == TYPE.EDIT)
-			result = false;
+			result = editRule(request.getRule());
+
+		if (result)
+		{
+			logger.info("Reloading rule engine");
+			engine.reloadEngine();
+		}
 
 		return new UpdateRuleResponse(request.getRule().getId(), result);
 	}
@@ -63,6 +66,40 @@ public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRu
 		gsonBuilder.registerTypeAdapter(LocalTime.class, new LocalTimeTypeConverter());
 		Gson gson = gsonBuilder.create();
 		return gson.fromJson(json, UpdateRuleRequest.class);
+	}
+
+	boolean editRule(Rule rule)
+	{
+		TransactionStatus status = txManager.getTransaction(new DefaultTransactionDefinition());
+
+		try
+		{
+			JdbcTemplate jdbcTemplate = new JdbcTemplate(txManager.getDataSource());
+			jdbcTemplate.update("DELETE FROM rule WHERE ruleId=?", rule.getId());
+			jdbcTemplate.update("DELETE FROM rule_then WHERE ruleId=?", rule.getId());
+			jdbcTemplate.update("DELETE FROM rule_condition WHERE ruleId=?", rule.getId());
+
+			insertNewRule(rule);
+
+			for (RuleThen ruleThen : rule.getThenList())
+			{
+				insertRuleThen(rule.getId(), ruleThen);
+			}
+
+			for (RuleCondition ruleCondition : rule.getConditionList())
+			{
+				insertRuleCondition(rule.getId(), ruleCondition);
+			}
+
+			txManager.commit(status);
+			return true;
+		}
+		catch (Exception ex)
+		{
+			txManager.rollback(status);
+			logger.error("Could not create rule", ex);
+			return false;
+		}
 	}
 
 	boolean deleteRule(Rule rule)
