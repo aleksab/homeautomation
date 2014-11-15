@@ -29,6 +29,20 @@ app.service('DevicesService', ['RestService', '$q', function (RestService, $q) {
             });
             return deferred.promise;
         },
+        discover: function(category){
+            var restCall, 
+            url = 'device/search',
+            deferred = $q.defer();
+            deferred.notify('Discovering Devices');
+            restCall =              RestService.post(url, {shouldShowKnownDevices:true}, {headers:{'Content-Type':'application/x-www-form-urlencoded'}});
+            restCall.success(function(data){
+                deferred.resolve(data.devices);
+            });
+            restCall.error(function(data){
+                deferred.reject(data);
+            });
+            return deferred.promise;
+        },
         trigger: function(device, dimLevel){
             dimLevel = parseInt(dimLevel);
             var restCall, 
@@ -57,9 +71,29 @@ app.service('DevicesService', ['RestService', '$q', function (RestService, $q) {
                 deferred.resolve(data.devices);
             });
             restCall.error(function(data){
-                deferred.reject('Error while receiving the list');
+                deferred.reject('Error while triggering the device');
+            });
+            return deferred.promise;
+        },
+        register: function(device, dimLevel){
+            dimLevel = parseInt(dimLevel);
+            var restCall, 
+            url = 'device/update',
+            deferred = $q.defer(),
+            data = {
+                type: 'ADD',
+                device: device
+            };
+            deferred.notify('Registrating the device ' + device.name + '.');
+            restCall =              RestService.post(url, data, {headers:{'Content-Type':'application/x-www-form-urlencoded'}});
+            restCall.success(function(data){
+                deferred.resolve('Registration success');
+            });
+            restCall.error(function(data){
+                deferred.reject(data);
             });
             return deferred.promise;
         }
+
     }
 }]);
