@@ -13,6 +13,11 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         .when('/discover', {
             templateUrl: 'app/templates/discover.html',
             controller: 'DiscoverController'
+        })
+
+        .when('/rules', {
+            templateUrl: 'app/templates/rules.html',
+            controller: 'RulesController'
         });
 
 }]);

@@ -15,23 +15,23 @@
 
         <div class="input-group" ng-repeat="device in devices" ng-hide="device.registrated==true" >
             <input type="text" class="form-control" ng-model="device.name" />
-          <span class="input-group-btn">
-            <button class="btn btn-default" ng-click="registerDevice(device)">
-                Add "{{device.name}}"
-            </button>
-        </span>
-    </div>
+            <span class="input-group-btn">
+                <button class="btn btn-default" ng-click="registerDevice(device)">
+                    Add "{{device.name}}"
+                </button>
+            </span>
+        </div>
 
-</fieldset>
+    </fieldset>
 
-<footer>
-    <div class="container">
-        <div class="alert alert-info" ng-if="feedback.notification!=null" ng-bind="feedback.notification"></div>
-        <div class="alert alert-danger" ng-if="feedback.error!=null" ng-bind="feedback.error"></div>
-        <div class="alert alert-success" ng-if="feedback.success!=null" ng-bind="feedback.success"></div>
-        <div class="alert alert-success" ng-if="devices.length>0">{{devices.length}} devices list discovered</div>
-    </div>
-</footer>
+    <footer>
+        <div class="container">
+            <div class="alert alert-info" ng-if="feedback.notification!=null" ng-bind="feedback.notification"></div>
+            <div class="alert alert-danger" ng-if="feedback.error!=null" ng-bind="feedback.error"></div>
+            <div class="alert alert-success" ng-if="feedback.success!=null" ng-bind="feedback.success"></div>
+            <div class="alert alert-success" ng-if="devices.length>0">{{devices.length}} devices list discovered</div>
+        </div>
+    </footer>
 
 
 </div>
