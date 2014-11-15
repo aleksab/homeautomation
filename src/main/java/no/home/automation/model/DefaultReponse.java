@@ -7,27 +7,9 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 public class DefaultReponse
 {
-	private boolean	success	= false;
-
 	public DefaultReponse()
 	{
-		
-	}
 
-	public DefaultReponse(boolean success)
-	{
-		super();
-		this.success = success;
-	}
-
-	public boolean isSuccess()
-	{
-		return success;
-	}
-
-	public void setSuccess(boolean success)
-	{
-		this.success = success;
 	}
 
 	@Override

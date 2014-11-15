@@ -4,9 +4,8 @@ public class UpdateRuleResponse extends DefaultReponse
 {
 	private int	ruleId;
 
-	public UpdateRuleResponse(int ruleId, boolean result)
+	public UpdateRuleResponse(int ruleId)
 	{
-		super(result);
 		this.ruleId = ruleId;
 	}
 

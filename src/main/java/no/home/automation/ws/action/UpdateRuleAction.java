@@ -56,7 +56,7 @@ public class UpdateRuleAction extends DefaultHandler<UpdateRuleRequest, UpdateRu
 			engine.reloadEngine();
 		}
 
-		return new UpdateRuleResponse(request.getRule().getId(), result);
+		return new UpdateRuleResponse(request.getRule().getId());
 	}
 
 	@Override

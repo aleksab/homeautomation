@@ -8,7 +8,6 @@ public class ListRuleResponse extends DefaultReponse
 
 	public ListRuleResponse(List<Rule> rules)
 	{
-		super(true);
 		this.rules = rules;
 	}
 

@@ -6,13 +6,11 @@ public class LoginResponse extends DefaultReponse
 
 	public LoginResponse()
 	{
-		super(false);
 		this.userId = 0;
 	}
-	
+
 	public LoginResponse(int userId)
 	{
-		super(true);
 		this.userId = userId;
 	}
 
