@@ -1,9 +1,10 @@
 {
   "name": "kiwi",
   "dependencies": {
-    "angular": "1.2.24",
     "angular-route": "1.2.24",
-    "angular-material": "~0.5.1"
+    "angular": "~1.3.2",
+    "bootstrap-css-only": "~3.3.0",
+    "angular-sanitize": "~1.3.2"
   },
   "private": true
 }

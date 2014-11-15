@@ -1,6 +1,6 @@
 var app = angular.module('kiwi', ['ngRoute', 'ngSanitize']);
 
-app.value('varRestBase', 'rest/');
+app.value('varRestBase', 'http://192.168.1.190:5300/');
 
 app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     $routeProvider
