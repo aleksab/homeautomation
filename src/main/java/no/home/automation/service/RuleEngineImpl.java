@@ -29,7 +29,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 public class RuleEngineImpl implements Runnable, RuleEngine, RfxcomEventListener
 {
-	private static final Logger	logger		= LoggerFactory.getLogger("stdoutLogger");
+	private static final Logger	logger		= LoggerFactory.getLogger("fileLogger");
 
 	private JdbcTemplate		jdbcTemplate;
 	private Scheduler			scheduler;

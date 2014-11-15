@@ -43,7 +43,7 @@ public class SearchDevicesAction extends DefaultHandler<SearchDeviceRequest, Sea
 
 	public void packetReceived(RFXComBaseMessage message)
 	{
-		logger.debug("Package received:\n" + message.toString());
+		logger.info("Package received:\n" + message.toString());
 
 		if (message.packetType == PacketType.LIGHTING2)
 		{

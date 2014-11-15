@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 public class RfxcomBusImpl implements RfxcomBus, RFXComEventListener
 {
-	private static final Logger			logger			= LoggerFactory.getLogger("stdoutLogger");
+	private static final Logger			logger			= LoggerFactory.getLogger("fileLogger");
 
 	private List<RfxcomEventListener>	listenerList	= null;
 	private RFXComSerialConnector		connector		= null;
