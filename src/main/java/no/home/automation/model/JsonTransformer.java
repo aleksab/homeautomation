@@ -15,7 +15,7 @@ import com.google.gson.GsonBuilder;
 
 public class JsonTransformer implements ResponseTransformer
 {
-	private static final Logger	logger	= LoggerFactory.getLogger("stdoutLogger");
+	private static final Logger	logger	= LoggerFactory.getLogger("fileLogger");
 
 	private Gson				gson	= new Gson();
 

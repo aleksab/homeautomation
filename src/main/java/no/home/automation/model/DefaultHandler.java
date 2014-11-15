@@ -10,7 +10,7 @@ import spark.Route;
 
 public abstract class DefaultHandler<T extends RequestValidator, V> implements Route
 {
-	protected static final Logger	logger	= LoggerFactory.getLogger("stdoutLogger");
+	protected static final Logger	logger	= LoggerFactory.getLogger("fileLogger");
 
 	protected Request				originalRequest;
 	private boolean					mustBeAuthenticated;
@@ -58,7 +58,7 @@ public abstract class DefaultHandler<T extends RequestValidator, V> implements R
 		}
 
 		try
-		{			
+		{
 			response.type("application/json");
 			return doHandle(incomingRequest);
 		}
