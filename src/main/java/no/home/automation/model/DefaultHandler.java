@@ -62,9 +62,14 @@ public abstract class DefaultHandler<T extends RequestValidator, V> implements R
 			response.type("application/json");
 			return doHandle(incomingRequest);
 		}
+		catch (IllegalArgumentException ex)
+		{
+			response.status(400);
+			return ex.getMessage();
+		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			response.status(500);
 			return "Internal error: " + ex.getMessage();
 		}
 	}
