@@ -38,6 +38,7 @@ public abstract class DefaultHandler<T extends RequestValidator, V> implements R
 		}
 		catch (Exception ex)
 		{
+			response.status(500);
 			logger.error("Could not translate request", ex);
 			return "Could not parse incoming data. Error message: " + ex.getMessage();
 		}
@@ -48,6 +49,7 @@ public abstract class DefaultHandler<T extends RequestValidator, V> implements R
 		}
 		catch (IllegalArgumentException ex)
 		{
+			response.status(400);
 			logger.error("Could not validate request", ex);
 			return "Could not validate request. Error message: " + ex.getMessage();
 		}

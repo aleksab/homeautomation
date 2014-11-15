@@ -19,7 +19,6 @@ import com.google.gson.GsonBuilder;
 public class UpdateDeviceAction extends DefaultHandler<UpdateDeviceRequest, UpdateDeviceResponse>
 {
 	private JdbcTemplate	jdbcTemplate	= null;
-	private String			message			= "OK";
 
 	public UpdateDeviceAction(boolean mustBeAuthenticated, JdbcTemplate jdbcTemplate)
 	{
@@ -30,15 +29,14 @@ public class UpdateDeviceAction extends DefaultHandler<UpdateDeviceRequest, Upda
 	@Override
 	public UpdateDeviceResponse doHandle(UpdateDeviceRequest request)
 	{
-		boolean result = false;
 		if (request.getType() == TYPE.DELETE)
-			result = deleteDevice(request.getDevice());
+			deleteDevice(request.getDevice());
 		else if (request.getType() == TYPE.ADD)
-			result = createNewDevice(request.getDevice());
+			createNewDevice(request.getDevice());
 		else if (request.getType() == TYPE.RENAME)
-			result = updateDevice(request.getDevice());
+			updateDevice(request.getDevice());
 
-		return new UpdateDeviceResponse(request.getDevice(), message, result);
+		return new UpdateDeviceResponse(request.getDevice());
 	}
 
 	@Override
@@ -55,17 +53,13 @@ public class UpdateDeviceAction extends DefaultHandler<UpdateDeviceRequest, Upda
 		{
 			Device existingDevice = findDevice(device.getSensorId(), device.getUnitCode());
 			if (existingDevice == null)
-			{
-				message = "There is no such device";
-				return false;
-			}
+				throw new IllegalArgumentException("Device does not exist");
 
 			jdbcTemplate.update("DELETE FROM device WHERE id=?", device.getId());
 			return true;
 		}
 		catch (Exception ex)
 		{
-			message = "Could not delete device";
 			logger.error("Could not delete device", ex);
 			return false;
 		}
@@ -77,17 +71,13 @@ public class UpdateDeviceAction extends DefaultHandler<UpdateDeviceRequest, Upda
 		{
 			Device existingDevice = findDevice(device.getSensorId(), device.getUnitCode());
 			if (existingDevice == null)
-			{
-				message = "There is no such device";
-				return false;
-			}
+				throw new IllegalArgumentException("Device does not exist");
 
 			jdbcTemplate.update("UPDATE device SET name=? WHERE id=?", device.getName(), device.getId());
 			return true;
 		}
 		catch (Exception ex)
 		{
-			message = "Could not update device";
 			logger.error("Could not update device", ex);
 			return false;
 		}
@@ -97,9 +87,7 @@ public class UpdateDeviceAction extends DefaultHandler<UpdateDeviceRequest, Upda
 	{
 		Device existingDevice = findDevice(device.getSensorId(), device.getUnitCode());
 		if (existingDevice != null)
-		{
 			throw new IllegalArgumentException("Device already exists");
-		}
 
 		SimpleJdbcInsert simpleInsert = new SimpleJdbcInsert(jdbcTemplate);
 		simpleInsert.withTableName("device");

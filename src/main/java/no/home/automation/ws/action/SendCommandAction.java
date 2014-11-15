@@ -28,22 +28,18 @@ public class SendCommandAction extends DefaultHandler<SendCommandRequest, Defaul
 	@Override
 	public DefaultReponse doHandle(SendCommandRequest request)
 	{
-		boolean result = false;
 		Device device = findDevice(request.getSensorId(), request.getUnitCode());
-
 		if (device == null)
 			throw new IllegalArgumentException("Not a valid device");
 
 		if (request.getType() == TYPE.ON)
-			result = bus.sendLightOnCommand(device);
+			bus.sendLightOnCommand(device);
 		else if (request.getType() == TYPE.OFF)
-			result = bus.sendLightOffCommand(device);
+			bus.sendLightOffCommand(device);
 		else if (request.getType() == TYPE.DIM)
-			result = bus.sendLightDimCommand(device, request.getDimLevel());
-		else
-			result = false;
+			bus.sendLightDimCommand(device, request.getDimLevel());
 
-		return new DefaultReponse(result);
+		return new DefaultReponse();
 	}
 
 	@Override

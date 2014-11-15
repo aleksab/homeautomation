@@ -8,7 +8,6 @@ public class ListDeviceResponse extends DefaultReponse
 
 	public ListDeviceResponse(List<Device> devices)
 	{
-		super(true);
 		this.devices = devices;
 	}
 
