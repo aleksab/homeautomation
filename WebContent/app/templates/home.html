@@ -1,9 +1,36 @@
-<div class="jumbotron">
-    <div class="container">
-        <h2><i class="glyphicon glyphicon-transfer"></i></h2>
-        <p>Hello!!!</p>                  
-        <a class="btn btn-primary" href="mood">Voila</a>                    
-    </div>
+
+
+<header data-ng-include="'app/templates/partials/header.html'"></header>
+
+
+<div class="row" ng-if="!devices || devices.length==0">
+	<div class="col-xs-12">
+		<button ng-click="getDevices()" class="btn btn-block btn-primary">Get devices</button>
+	</div>
 </div>
 
-<div data-ng-include="'app/templates/partials/footer.html'"></div>
+<div class="row">
+	<div class="col-xs-12" ng-repeat="device in devices">
+		<h2>{{device.name}}</h2>
+		<div class="btn-group btn-group-justified" role="group" aria-label="..." ng-init="device.showDimmer=false">
+			<div class="btn-group" role="group"><button ng-click="triggerDevice(device, 0)" type="button" class="btn btn-default"><i class="glyphicon glyphicon-remove-circle"></i> Off</button>
+			</div>
+			<div class="btn-group" role="group"><button ng-click="device.showDimmer=!device.showDimmer" ng-class="{active:device.showDimmer==true}" type="button" class="btn btn-default"><i class="glyphicon glyphicon-star"></i> Dim</button>
+			</div>
+			<div class="btn-group" role="group"><button ng-click="triggerDevice(device, 100)" type="button" class="btn btn-default"><i class="glyphicon glyphicon-ok-circle"></i> On</button>
+			</div>
+		</div>
+		<div class="well well-sm"ng-if="device.showDimmer==true">
+			<input id="test" type="range" ng-model="device.dim" step="10" ng-mouseup="triggerDevice(device, device.dim)"/>
+		</div>
+	</div>
+</div>
+
+<footer>
+	<div class="container">
+		<div class="alert alert-info" ng-if="feedback.notification!=null" ng-bind="feedback.notification"></div>
+		<div class="alert alert-danger" ng-if="feedback.error!=null" ng-bind="feedback.error"></div>
+		<div class="alert alert-success" ng-if="feedback.success!=null" ng-bind="feedback.success"></div>
+		<div class="alert alert-success" ng-if="devices.length>0">{{devices.length}} devices list found</div>
+	</div>
+</footer>
