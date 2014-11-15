@@ -95,35 +95,25 @@ public class UpdateDeviceAction extends DefaultHandler<UpdateDeviceRequest, Upda
 
 	boolean createNewDevice(Device device)
 	{
-		try
+		Device existingDevice = findDevice(device.getSensorId(), device.getUnitCode());
+		if (existingDevice != null)
 		{
-			Device existingDevice = findDevice(device.getSensorId(), device.getUnitCode());
-			if (existingDevice != null)
-			{
-				message = "Device already exists, rename instead";
-				return false;
-			}
-
-			SimpleJdbcInsert simpleInsert = new SimpleJdbcInsert(jdbcTemplate);
-			simpleInsert.withTableName("device");
-			simpleInsert.setGeneratedKeyName("id");
-
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put("sensorId", device.getSensorId());
-			parameters.put("unitCode", device.getUnitCode());
-			parameters.put("name", device.getName());
-
-			int id = simpleInsert.executeAndReturnKey(parameters).intValue();
-			device.setId(id);
-
-			return true;
+			throw new IllegalArgumentException("Device already exists");
 		}
-		catch (Exception ex)
-		{
-			message = "Could not insert device";
-			logger.error("Could not insert device", ex);
-			return false;
-		}
+
+		SimpleJdbcInsert simpleInsert = new SimpleJdbcInsert(jdbcTemplate);
+		simpleInsert.withTableName("device");
+		simpleInsert.setGeneratedKeyName("id");
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("sensorId", device.getSensorId());
+		parameters.put("unitCode", device.getUnitCode());
+		parameters.put("name", device.getName());
+
+		int id = simpleInsert.executeAndReturnKey(parameters).intValue();
+		device.setId(id);
+
+		return true;
 	}
 
 	Device findDevice(int sensorId, int unitCode)
