@@ -1,0 +1,37 @@
+<div>
+
+    <div class="alert alert-warning" ng-if="feedback.loading==true">
+        <button class="pull-right btn btn-xs btn-warning" ng-click="stopDiscoverDevices()">Stop</button>
+        Discovering devices 
+    </div>
+    
+    <div class="alert alert-info" ng-if="feedback.loading==false">
+        <button class="pull-right btn btn-xs btn-success" ng-click="startDiscoverDevices()">Resume</button>
+        Discovery stopped.
+    </div>
+
+    <fieldset ng-if="devices!==null">
+        <legend>Discovered devices</legend>
+
+        <div class="input-group" ng-repeat="device in devices" ng-hide="device.registrated==true" >
+            <input type="text" class="form-control" ng-model="device.name" />
+          <span class="input-group-btn">
+            <button class="btn btn-default" ng-click="registerDevice(device)">
+                Add "{{device.name}}"
+            </button>
+        </span>
+    </div>
+
+</fieldset>
+
+<footer>
+    <div class="container">
+        <div class="alert alert-info" ng-if="feedback.notification!=null" ng-bind="feedback.notification"></div>
+        <div class="alert alert-danger" ng-if="feedback.error!=null" ng-bind="feedback.error"></div>
+        <div class="alert alert-success" ng-if="feedback.success!=null" ng-bind="feedback.success"></div>
+        <div class="alert alert-success" ng-if="devices.length>0">{{devices.length}} devices list discovered</div>
+    </div>
+</footer>
+
+
+</div>
