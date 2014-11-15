@@ -21,7 +21,7 @@
 			</div>
 		</div>
 		<div class="well well-sm"ng-if="device.showDimmer==true">
-			<input id="test" type="range" ng-model="device.dim" step="10" ng-mouseup="triggerDevice(device, device.dim)"/>
+			<input id="test" type="range" min="10" max="90" ng-model="device.dim" step="10" ng-mouseup="triggerDevice(device, device.dim)"  ng-click="triggerDevice(device, device.dim)"/>
 		</div>
 	</div>
 </div>

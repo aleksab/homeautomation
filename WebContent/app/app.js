@@ -1,4 +1,4 @@
-var app = angular.module('kiwi', ['ngRoute', 'ngSanitize']);
+var app = angular.module('kiwi', ['ngRoute', 'ngSanitize', 'ngTouch']);
 
 app.value('varRestBase', 'http://192.168.1.190:5300/');
 
