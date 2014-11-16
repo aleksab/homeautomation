@@ -8,6 +8,7 @@ import java.util.List;
 
 import no.home.automation.model.Device;
 import no.home.automation.rfxcom.RFXComEventListener;
+import no.home.automation.rfxcom.RFXComMessageReceivedEvent;
 import no.home.automation.rfxcom.RFXComSerialConnector;
 import no.home.automation.rfxcom.messages.RFXComBaseMessage;
 import no.home.automation.rfxcom.messages.RFXComLighting2Message;
@@ -75,6 +76,7 @@ public class RfxcomBusImpl implements RfxcomBus, RFXComEventListener
 		try
 		{
 			connector.sendMessage(data);
+			packetReceived(new RFXComMessageReceivedEvent(this), data);
 			return true;
 		}
 		catch (IOException e)

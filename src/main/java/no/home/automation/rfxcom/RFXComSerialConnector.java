@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public class RFXComSerialConnector implements RFXComConnectorInterface
 {
-	private static final Logger					logger			= LoggerFactory.getLogger("fileLogger");
+	private static final Logger					logger			= LoggerFactory.getLogger("stdoutLogger");
 
 	private static List<RFXComEventListener>	_listeners		= new ArrayList<RFXComEventListener>();
 
