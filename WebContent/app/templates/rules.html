@@ -1,0 +1,110 @@
+
+<button class="btn btn-block btn-primary btn-lg" ng-click="ruleManager.add()">
+  Add new rule
+</button>
+
+<hr/>
+
+
+<div class="panel panel-default" ng-class="{'panel-success':rule.active==true,'panel-warning':rule.active!=true}" ng-repeat="rule in rules">
+  <div class="panel-heading">
+    <button class="pull-right btn btn-default btn-xs" ng-click="rule.expanded=false" ng-if="rule.expanded==true">
+      <i class="glyphicon glyphicon-chevron-up"></i>
+    </button>
+    <button class="pull-right btn btn-default btn-xs" ng-click="rule.expanded=true" ng-if="rule.expanded!=true">
+      <i class="glyphicon glyphicon-chevron-down"></i>
+    </button>
+
+    <button class="pull-right btn btn-warning btn-xs" ng-click="rule.active=false" ng-if="rule.active==true">
+      <i class="glyphicon glyphicon-remove"></i> Disable
+    </button>
+    <button class="pull-right btn btn-success btn-xs" ng-click="rule.active=true" ng-if="rule.active!=true">
+      <i class="glyphicon glyphicon-ok"></i> Enable
+    </button>
+
+    <button class="pull-right btn btn-success btn-xs" ng-if="rule.expanded==true" ng-click="ruleManager.save(rule)">Save</button>
+    <button class="pull-right btn btn-danger btn-xs" ng-if="rule.expanded==true" ng-click="ruleManager.remove($index)">Delete</button>
+    {{rule.name}} &nbsp;
+  </div>
+  <div class="panel-body" ng-if="rule.expanded==true">
+
+    <form role="form">
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label>Rule name</label>
+            <input type="text" class="form-control" ng-model="rule.name" placeholder="Rule name">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+
+        <div class="col-xs-4">
+          <div class="form-group">
+            <label>When</label>
+            <select class="form-control input-sm" ng-model="rule.whenDeviceId" ng-options="device.sensorId as device.name for device in devices"></select>
+            <select ng-disabled="!rule.whenDeviceId" class="form-control input-sm" ng-model="rule.whenAction" ng-options="whenAction.code as whenAction.name for whenAction in whenActions"></select>
+            <input type="time" ng-if="rule.whenAction=='TIME'"  class="form-control" ng-model="rule.whenTime" />
+          </div>
+        </div>
+
+        <div class="col-xs-8">
+          <div class="form-group">
+            <label>Then</label>
+            <a ng-click="ruleManager.addDevice(rule)">Add device</a>
+
+
+        <div ng-repeat="thenListItem in rule.thenList" class="row">
+          <div class="col-xs-4">
+            <select class="form-control input-sm" ng-model="thenListItem.deviceId" ng-options="device.sensorId as device.name for device in devices"></select>
+          </div>
+          <div class="col-xs-4">
+            <select ng-disabled="!thenListItem.deviceId" class="form-control input-sm" ng-model="thenListItem.action" ng-options="thenAction.code as thenAction.name for thenAction in thenActions"></select>
+                      </div>
+          <div class="col-xs-2">
+            <select class="form-control input-sm" ng-model="thenListItem.value" ng-options="thenListItemValue in thenActionValues">
+            </select>
+          </div>
+          <div class="col-xs-2">
+            <button class="btn btn-sm btn-default" ng-click="ruleManager.removeDevice(rule, $index)">
+                Remove
+            </button>
+          </div>
+        </div>
+
+
+          </div>
+
+        </div>
+
+
+      </div>  
+
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label>If</label>
+          </div>
+
+        </div>
+      </div>
+
+    </form>
+
+
+
+
+  </div>
+</div>
+
+
+
+<footer>
+	<div class="container">
+		<div class="alert alert-info" ng-if="feedback.notification!=null" ng-bind="feedback.notification"></div>
+		<div class="alert alert-danger" ng-if="feedback.error!=null" ng-bind="feedback.error"></div>
+		<div class="alert alert-success" ng-if="feedback.success!=null" ng-bind="feedback.success"></div>
+		<div class="alert alert-success" ng-if="devices.length>0">{{devices.length}} devices list found</div>
+	</div>
+</footer>

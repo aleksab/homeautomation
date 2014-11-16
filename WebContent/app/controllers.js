@@ -1,12 +1,41 @@
-app.controller('RulesController', ['$scope', 'DevicesService', 'DeviceRule', function($scope, DevicesService, DeviceRule) {
+app.controller('RulesController', ['$scope', 'DeviceRuleService', 'DevicesService', 'DeviceRule', 'DeviceRuleThenListItem', function($scope, DeviceRuleService, DevicesService, DeviceRule, DeviceRuleThenListItem) {
 
-        var clearInputs = function() {
-            $scope.feedback = {};
-        };
+        $scope.feedback = {};
+        $scope.whenActions = [
+            {
+                code: 'ON',
+                name: 'Is turned on'
+            },
+            {
+                code: 'OFF',
+                name: 'Is turned off'
+            },
+            {
+                code: 'TIME',
+                name: 'And the time is...'
+            },
 
+        ];
+        $scope.thenActions = [
+            {
+                code: 'ON',
+                name: 'Turn on'
+            },
+            {
+                code: 'OFF',
+                name: 'Turn off'
+            },
+            {
+                code: 'WAIT_OFF',
+                name: 'Turn off after'
+            },
+            {
+                code: 'DIM',
+                name: 'Dim'
+            }
+
+        ];
         $scope.getDevices = function() {
-
-            clearInputs();
 
             $scope.devices = [];
 
@@ -23,22 +52,41 @@ app.controller('RulesController', ['$scope', 'DevicesService', 'DeviceRule', fun
 
         };
 
-
-
         $scope.ruleManager = {
-            checkDevice: function(device) {
-                if (!device.rules) {
-                    device.rules = [];
-                }
+            get: function() {
+                $scope.rules = [];
+                var rulePromise = DeviceRuleService.get();
+
+                rulePromise.then(function(data) {
+                    $scope.rules = data;
+                }, function(data) {
+                        $scope.feedback.error = data;
+                    }, function(data) {
+                        $scope.feedback.notification = data;
+                    }
+                );
             },
-            add: function(device) {
-                this.checkDevice(device);
-                device.rules.push(new DeviceRule());
+            add: function() {
+                var newDevice = new DeviceRule();
+                newDevice.expanded = true;
+                $scope.rules.push(newDevice);
             },
-            remove: function(device, index) {
-                device.rules.splice(index, 1);
+            remove: function(index) {
+                $scope.rules.splice(index, 1);
+                rule.feedback = {};
+                var rulePromise = DeviceRuleService.save(rule);
+
+                rulePromise.then(function(data) {
+                    rule.feedback.success = data;
+                }, function(data) {
+                        rule.feedback.error = data;
+                    }, function(data) {
+                        rule.feedback.notification = data;
+                    }
+                );
             },
             save: function(rule) {
+
                 rule.feedback = {};
                 var rulePromise = DeviceRuleService.save(rule);
 
@@ -51,11 +99,25 @@ app.controller('RulesController', ['$scope', 'DevicesService', 'DeviceRule', fun
                     }
                 );
 
+            },
+            addDevice: function(rule) {
+                var newRuleDevice = new DeviceRuleThenListItem();
+                rule.thenList.push(newRuleDevice);
+            },
+            removeDevice: function(rule, index) {
+                rule.splice(index, 1);
             }
         };
 
         (function() {
             $scope.getDevices();
+            $scope.ruleManager.get();
+            $scope.ruleManager.add();
+            $scope.thenActionValues = [];
+            for (var i=0;i<=100;i++){
+            $scope.thenActionValues.push(i);
+
+            }
         }());
 
 }]);
