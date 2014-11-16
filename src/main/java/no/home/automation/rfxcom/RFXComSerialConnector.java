@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public class RFXComSerialConnector implements RFXComConnectorInterface
 {
-	private static final Logger					logger			= LoggerFactory.getLogger("stdoutLogger");
+	private static final Logger					logger			= LoggerFactory.getLogger("fileLogger");
 
 	private static List<RFXComEventListener>	_listeners		= new ArrayList<RFXComEventListener>();
 
@@ -143,7 +143,7 @@ public class RFXComSerialConnector implements RFXComConnectorInterface
 				{
 
 					byte[] logData = Arrays.copyOf(tmpData, len);
-					logger.debug("Received data (len={}): {}", len, DatatypeConverter.printHexBinary(logData));
+					logger.trace("Received data (len={}): {}", len, DatatypeConverter.printHexBinary(logData));
 
 					for (int i = 0; i < len; i++)
 					{
