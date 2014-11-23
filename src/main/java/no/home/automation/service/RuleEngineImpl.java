@@ -29,7 +29,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 public class RuleEngineImpl implements Runnable, RuleEngine, RfxcomEventListener
 {
-	private static final Logger	logger		= LoggerFactory.getLogger("fileLogger");
+	private static final Logger	logger	= LoggerFactory.getLogger("fileLogger");
 
 	private JdbcTemplate		jdbcTemplate;
 	private Scheduler			scheduler;
@@ -38,8 +38,6 @@ public class RuleEngineImpl implements Runnable, RuleEngine, RfxcomEventListener
 	private List<Rule>			timeRules;
 	private List<Rule>			onRules;
 	private List<Rule>			offRules;
-
-	private boolean				keepRunning	= false;
 
 	public RuleEngineImpl(JdbcTemplate jdbcTemplate, RfxcomBus bus)
 	{
@@ -51,7 +49,7 @@ public class RuleEngineImpl implements Runnable, RuleEngine, RfxcomEventListener
 		offRules = new LinkedList<>();
 
 		scheduler = new Scheduler();
-		scheduler.schedule("/1 * * * *", this);
+		scheduler.schedule("*/1 * * * *", this);
 	}
 
 	public void startEngine()
@@ -64,12 +62,13 @@ public class RuleEngineImpl implements Runnable, RuleEngine, RfxcomEventListener
 		// listen to timer
 		scheduler.start();
 
-		keepRunning = true;
-		new Thread(this).start();
+		logger.info("Engine started");
 	}
 
 	public void reloadEngine()
 	{
+		logger.info("Reloading engine rules");
+
 		timeRules.clear();
 		onRules.clear();
 		offRules.clear();
@@ -92,33 +91,22 @@ public class RuleEngineImpl implements Runnable, RuleEngine, RfxcomEventListener
 
 		scheduler.stop();
 
-		keepRunning = false;
+		logger.info("Engine stopped");
 	}
 
 	@Override
 	public void run()
 	{
-		while (keepRunning)
+		logger.info("Checking time rules {}", timeRules.size());
+		for (Rule rule : timeRules)
 		{
-			logger.info("Checking time rules {}", timeRules.size());
-			for (Rule rule : timeRules)
-			{
-				LocalTime now = LocalTime.now();
-				LocalTime time = rule.getWhenTime();
+			LocalTime now = LocalTime.now();
+			LocalTime time = rule.getWhenTime();
 
-				if (now.getHourOfDay() == time.getHourOfDay() && now.getMinuteOfHour() == time.getMinuteOfHour())
-				{
-					Device device = findDevice(rule.getWhenDeviceId());
-					triggerRule(device, rule);
-				}
-			}
-
-			try
+			if (now.getHourOfDay() == time.getHourOfDay() && now.getMinuteOfHour() == time.getMinuteOfHour())
 			{
-				Thread.sleep(1000 * 60);
-			}
-			catch (InterruptedException e)
-			{
+				Device device = findDevice(rule.getWhenDeviceId());
+				triggerRule(device, rule);
 			}
 		}
 	}
